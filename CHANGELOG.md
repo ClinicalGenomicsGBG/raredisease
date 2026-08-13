@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
+- Use the sex estimated by NGSbits `SampleGender` as input to ExpansionHunter instead of the sex value from the samplesheet.
+
 - Replace the separate `--sample_id_map` file with an optional `customer_id` column on the main input samplesheet: sample-level customer/external IDs used to label Saltshaker HTML reports and rename VCF2CYTOSURE output are now supplied directly alongside each sample instead of in a second CSV [issue #861](https://github.com/nf-core/raredisease/issues/861) [PR #947](https://github.com/nf-core/raredisease/pull/947)
 - Split mitochondrial alignment out of `ALIGN` into its own independently-gated `ALIGN_MITOCHONDRIA` subworkflow, called directly from `raredisease.nf`, matching how `CALL_MT_SNVS` was already split out of `CALL_SNV` [issue #944](https://github.com/nf-core/raredisease/issues/944) [PR #945](https://github.com/nf-core/raredisease/pull/945)
 - Migrate all `.set { ch }` and `.tap { ch }` operators to direct channel assignment (`ch = ...`) across `main.nf`, `workflows/raredisease.nf`, and all local subworkflows; behavior-preserving refactor, prerequisite for adopting Nextflow's static type checking [issue #940](https://github.com/nf-core/raredisease/issues/940) [PR #941](https://github.com/nf-core/raredisease/pull/941)

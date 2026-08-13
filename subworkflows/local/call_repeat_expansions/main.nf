@@ -21,9 +21,19 @@ workflow CALL_REPEAT_EXPANSIONS {
 
     main:
         ch_samplegender_parsed = ch_samplegender.map { meta, tsv ->
-            def gender = tsv.readLines()
-                .find { line -> !line.startsWith('#') }
-                .split('\t')[1]
+            def data_line = tsv.readLines()
+                .find { line -> line.trim() && !line.startsWith('#') }
+
+            def gender
+            if (data_line) {
+                gender = data_line.split('\t')[1]
+            } else if (workflow.stubRun) {
+                gender = meta.sex?.toString() == '2' ? 'female' : 'male'
+            } else {
+                throw new IllegalStateException(
+                    "No SampleGender result found for sample ${meta.id} in ${tsv}"
+                )
+            }
 
             [meta.id, gender]
         }

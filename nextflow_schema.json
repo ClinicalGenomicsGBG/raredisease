@@ -176,6 +176,15 @@
                     "help_text": "The male panel used to run DenoiseReadCounts.",
                     "hidden": true
                 },
+                "glnexus_config": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "fa_icon": "fas fa-file",
+                    "description": "Glnexus configuration file",
+                    "help_text": "Path to the glnexus configuration file.",
+                    "pattern": "^\\S+\\.yml$"
+                },
                 "gnomad_af": {
                     "type": "string",
                     "exists": true,
@@ -346,16 +355,6 @@
                     "fa_icon": "fas fa-file-csv",
                     "description": "File with gene ids that have reduced penetrance. For use with genmod"
                 },
-                "rtg_truthvcfs": {
-                    "type": "string",
-                    "exists": true,
-                    "format": "file-path",
-                    "description": "Vcf used for evaluating variant calls.",
-                    "fa_icon": "fas fa-file-csv",
-                    "help_text": "Path to comma-separated file containing information about the truth vcf files used by vcfeval.",
-                    "pattern": "^\\S+\\.(csv|tsv|json|yaml|yml)$",
-                    "schema": "assets/rtg_truthvcfs_schema.json"
-                },
                 "sambamba_regions": {
                     "type": "string",
                     "exists": true,
@@ -390,14 +389,6 @@
                     "format": "path",
                     "fa_icon": "fas fa-file",
                     "description": "SV rank model config file for genmod."
-                },
-                "sdf": {
-                    "type": "string",
-                    "exists": true,
-                    "format": "directory-path",
-                    "description": "Directory for pre-built sdf index. Used by rtg/vcfeval",
-                    "help_text": "If none provided, will be generated automatically from the FASTA reference.",
-                    "fa_icon": "fas fa-folder-open"
                 },
                 "sequence_dictionary": {
                     "type": "string",
@@ -598,6 +589,13 @@
                     "description": "Specifies the platform on which the reads were sequenced.",
                     "fa_icon": "fas fa-align-center"
                 },
+                "pre_vep_snv_filter_expression": {
+                    "type": "string",
+                    "default": "INFO/GNOMADAF > 0.70 | INFO/GNOMADAF_popmax > 0.70",
+                    "description": "bcftools expression used to exclude SNVs before VEP annotation.",
+                    "help_text": "Passed as the `--exclude` expression to bcftools view before ENSEMBLVEP_SNV. Set stricter filters to reduce the number of variants processed downstream.",
+                    "fa_icon": "fas fa-filter"
+                },
                 "ngsbits_samplegender_method": {
                     "type": "string",
                     "default": "xy",
@@ -613,11 +611,6 @@
                 "run_mt_for_wes": {
                     "type": "boolean",
                     "description": "Specifies whether to run mitochondrial analysis for wes samples",
-                    "fa_icon": "fas fa-toggle-on"
-                },
-                "run_rtgvcfeval": {
-                    "type": "boolean",
-                    "description": "Specifies whether to run rtgtools' vcfeval",
                     "fa_icon": "fas fa-toggle-on"
                 },
                 "run_vcfanno_db_sanity_check": {
@@ -652,7 +645,7 @@
                     "fa_icon": "fas fa-forward",
                     "description": "Disable specified subworkflows.",
                     "help_text": "Multiple subworkflows can be specified, separated by commas.",
-                    "pattern": "^((me_calling|me_annotation|mt_annotation|mt_calling|mt_subsample|repeat_annotation|repeat_calling|snv_annotation|snv_calling|sv_annotation|sv_calling|generate_clinical_set)?,?)*(?<!,)$"
+                    "pattern": "^((me_calling|me_annotation|mt_annotation|mt_snv_calling|mt_subsample|mt_sv_calling|repeat_annotation|repeat_calling|snv_annotation|snv_calling|sv_annotation|sv_calling|generate_clinical_set)?,?)*(?<!,)$"
                 },
                 "skip_tools": {
                     "type": "string",
@@ -808,7 +801,7 @@
                 },
                 "vep_cache_version": {
                     "type": "integer",
-                    "default": 112,
+                    "default": 116,
                     "description": "Specify the version of the VEP cache provided to the `--vep_cache` option.",
                     "fa_icon": "fas fa-align-center"
                 }

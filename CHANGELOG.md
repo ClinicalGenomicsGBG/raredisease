@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Added `pre_vep_snv_filter_expression` parameter to configure the `bcftools view --exclude` expression used to filter SNVs before VEP annotation, instead of hardcoding it in `conf/modules/annotate_genome_snvs.config` [issue #929](https://github.com/nf-core/raredisease/issues/929) [PR #958](https://github.com/nf-core/raredisease/pull/958)
 - Add a VCF entry point: samplesheets can now supply precalled, case-level SNV/SV/MT VCFs directly, skipping the corresponding calling step and feeding straight into annotation and ranking. See `docs/usage.md` for samplesheet details [issue #261](https://github.com/nf-core/raredisease/issues/261) [PR #936](https://github.com/nf-core/raredisease/pull/936)
 - Add test coverage for the VCF entry point: function-level nf-test cases for `validateNoMixedCaseInput`/`validatePrecalledVcfCoverage`/`extractPrecalledVcfs`/`hasPrecalledSnvVcf`/`hasPrecalledSvVcf`/`hasPrecalledMtVcf`, and a new `test_vcf` profile/pipeline-level test confirming precalled SNV/SV/MT VCFs correctly skip calling while annotation/ranking still run, plus a negative test for the mixed precalled/raw-input case [issue #261](https://github.com/nf-core/raredisease/issues/261)
   [PR #935](https://github.com/nf-core/raredisease/pull/935)
@@ -20,10 +21,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added non-stub tests for `annotate_mobile_elements` [issue #795](https://github.com/nf-core/raredisease/issues/795) [PR #923](https://github.com/nf-core/raredisease/pull/923)
 - Added non-stub tests for `call_mobile_elements` [issue #795](https://github.com/nf-core/raredisease/issues/795) [PR #924](https://github.com/nf-core/raredisease/pull/924)
 
+### `Removed`
+
+- Removed the `rtgtools`/`vcfeval` variant-evaluation feature entirely: the `VARIANT_EVALUATION` subworkflow, `rtgtools/format` and `rtgtools/vcfeval` modules, and the `--run_rtgvcfeval`, `--rtg_truthvcfs`, and `--sdf` parameters [issue #963](https://github.com/nf-core/raredisease/issues/963) [PR #964](https://github.com/nf-core/raredisease/pull/964)
+
 ### `Changed`
 
 - Use the sex estimated by NGSbits `SampleGender` as input to ExpansionHunter instead of the sex value from the samplesheet.
-
+- Feed `UPD_SITES`, `UPD_REGIONS`, and `ANNOTATE_RHOCALLVIZ` the unfiltered vcfanno-annotated VCF instead of the VEP/`pre_vep_snv_filter_expression`-filtered one, so stricter filtering (#929) no longer removes variants these subworkflows need [issue #930](https://github.com/nf-core/raredisease/issues/930) [PR #962](https://github.com/nf-core/raredisease/pull/962)
+- Bump VEP to 116.1 and default `vep_cache_version` to 116; the updated `ensemblvep/vep` module now takes the VEP cache as a `[meta, path]` tuple instead of a bare path, so `PREPARE_REFERENCES` was updated to emit it in that shape [issue #872](https://github.com/nf-core/raredisease/issues/872) [PR #968](https://github.com/nf-core/raredisease/pull/968)
+- Extend the VCF entry point to a fifth type, `repeat` [issue #261](https://github.com/nf-core/raredisease/issues/261) [PR #957](https://github.com/nf-core/raredisease/pull/957)
+- Extend the VCF entry point to a fourth type, `me` [issue #261](https://github.com/nf-core/raredisease/issues/261) [PR #955](https://github.com/nf-core/raredisease/pull/955)
+- Split `skip_mt_calling` into independently-gated `skip_mt_snv_calling` (gates `CALL_MT_SNVS` only, same behavior as before) and `skip_mt_sv_calling` (new tag gating `CALL_SV_MT` - MitoSalt/SaltShaker and the mitodel/MT-deletion script) [issue #950](https://github.com/nf-core/raredisease/issues/950) [PR #954](https://github.com/nf-core/raredisease/pull/954)
+- Extract the clinical-set-filter → CSQ/PLI-annotate → (proband-filter) → rank sequence, previously duplicated once each for SNV/MT/SV/ME in `raredisease.nf`, into a new `FILTER_ANNOTATE_RANK` subworkflow called four times under aliases [issue #952](https://github.com/nf-core/raredisease/issues/952) [PR #953](https://github.com/nf-core/raredisease/pull/953)
+- Split mitochondrial SV calling out of `CALL_STRUCTURAL_VARIANTS` into its own top-level `CALL_SV` (nuclear-only) and `CALL_SV_MT` (unchanged) subworkflows called independently from `raredisease.nf`, with the final nuclear+MT SVDB merge moved to the top level; matches how `CALL_SNV`/`CALL_MT_SNVS` are already split; behavior-preserving refactor [issue #948](https://github.com/nf-core/raredisease/issues/948) [PR #951](https://github.com/nf-core/raredisease/pull/951)
 - Replace the separate `--sample_id_map` file with an optional `customer_id` column on the main input samplesheet: sample-level customer/external IDs used to label Saltshaker HTML reports and rename VCF2CYTOSURE output are now supplied directly alongside each sample instead of in a second CSV [issue #861](https://github.com/nf-core/raredisease/issues/861) [PR #947](https://github.com/nf-core/raredisease/pull/947)
 - Split mitochondrial alignment out of `ALIGN` into its own independently-gated `ALIGN_MITOCHONDRIA` subworkflow, called directly from `raredisease.nf`, matching how `CALL_MT_SNVS` was already split out of `CALL_SNV` [issue #944](https://github.com/nf-core/raredisease/issues/944) [PR #945](https://github.com/nf-core/raredisease/pull/945)
 - Migrate all `.set { ch }` and `.tap { ch }` operators to direct channel assignment (`ch = ...`) across `main.nf`, `workflows/raredisease.nf`, and all local subworkflows; behavior-preserving refactor, prerequisite for adopting Nextflow's static type checking [issue #940](https://github.com/nf-core/raredisease/issues/940) [PR #941](https://github.com/nf-core/raredisease/pull/941)
@@ -55,9 +66,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace `ch_publish`/`subworkflow_results` with named typed channel emits for alignment and subsample-MT subworkflows [#850](https://github.com/nf-core/raredisease/pull/850)
 - Update saltshaker modules to version 1.1.1 so they can run on empty mitosalt output [#856](https://github.com/nf-core/raredisease/pull/856)
 - Update metromap to reflect the addition of mitosalt + saltshaker and removal of eklipse [#892](https://github.com/nf-core/raredisease/pull/892)
+- Changed default glnexus config from `DeepVariant_unfiltered` to a custom config in `assets/` due to unfixed [bug](https://github.com/dnanexus-rnd/GLnexus/issues/286) [issue #960](https://github.com/nf-core/raredisease/issues/960) [PR #961](https://github.com/nf-core/raredisease/pull/961)
 
 ### `Fixed`
 
+- Fix `MERGE_NUCLEAR_AND_MT_SVS` crashing with "If priority is used, one tag per VCF is needed" whenever both nuclear and mitochondrial SV calling ran: `CALL_SV` no longer pre-merges the nuclear caller VCFs (tiddit/manta/gcnvcaller/cnvnator) into one file before the top-level merge; it now emits the individual per-caller VCFs so the single merge in `raredisease.nf` always has one priority tag per input VCF. Regression from the `CALL_SV`/`CALL_SV_MT` split in [issue #948](https://github.com/nf-core/raredisease/issues/948) [PR #959](https://github.com/nf-core/raredisease/pull/959)
 - Speed up and stabilise the call_snv_deepvariant/call_snv (DeepVariant) subworkflow tests by using small chr22 fixtures, adding 2-sample coverage for GLnexus joint genotyping, and restoring the deterministic variantsMD5 snapshot assertion. [#918](https://github.com/nf-core/raredisease/pull/918)
 - Emit an error at startup when `vep_filters_scout_fmt` or `vep_filters` contains no records (headers or empty lines only), which would otherwise cause the clinical set to silently contain 0 variants [#913](https://github.com/nf-core/raredisease/pull/913)
 - Add missing CADD 1.7.3 module update to the v3.0.0 `Tool updates` table in `CHANGELOG.md` [issue #888](https://github.com/nf-core/raredisease/issues/888) [PR #919](https://github.com/nf-core/raredisease/pull/919)
@@ -69,10 +82,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Parameters
 
-| Old parameter | New parameter           |
-| ------------- | ----------------------- |
-|               | contamination_sites     |
-|               | contamination_sites_tbi |
+| Old parameter | New parameter                 |
+| ------------- | ----------------------------- |
+|               | contamination_sites           |
+|               | contamination_sites_tbi       |
+|               | pre_vep_snv_filter_expression |
+|               | glnexus_config                |
 
 ### Tool updates
 
@@ -81,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | gatk4/calculatecontamination |             | 4.6.2.0     |
 | gatk4/getpileupsummaries     |             | 4.6.2.0     |
 | Saltshaker                   | 1.0.0       | 1.1.1       |
+| Ensemblvep                   | 110.1       | 116.1       |
 
 ## 3.1.2 - Princess Peach (patch) [2026-07-06]
 

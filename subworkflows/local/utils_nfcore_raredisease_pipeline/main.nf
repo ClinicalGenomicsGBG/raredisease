@@ -181,7 +181,7 @@ workflow PIPELINE_INITIALISATION {
     align          = ch_samplesheet_by_type.align // channel: [ val(meta), [ path(bam/cram), path(bai/crai) ] ]
     samples        = ch_samples                   // channel: [ val(meta) ]
     case_info      = ch_case_info                 // channel: [ val(case_info) ]
-    precalled_vcfs = ch_precalled_vcfs             // channel: [ val([snv:[vcf,tbi]|null, sv:[...]|null, mt:[...]|null]) ]
+    precalled_vcfs = ch_precalled_vcfs             // channel: [ val([snv:[vcf,tbi]|null, sv:[...]|null, mt:[...]|null, me:[...]|null, repeat:[...]|null]) ]
     versions       = ch_versions                  // channel: [ path(versions) ]
 }
 
@@ -285,7 +285,7 @@ def boolean hasSpringInput() {
     return file(params.input).readLines().any { line -> line.contains('.spring') }
 }
 
-// Checks whether any samplesheet row has its 'type' column set to the given precalled-VCF type (snv/sv/mt)
+// Checks whether any samplesheet row has its 'type' column set to the given precalled-VCF type (snv/sv/mt/me/repeat)
 def boolean hasPrecalledVcfOfType(String type) {
     def lines = file(params.input).readLines()
     if (!lines) {
@@ -315,10 +315,18 @@ def boolean hasPrecalledMtVcf() {
     return hasPrecalledVcfOfType('mt')
 }
 
+def boolean hasPrecalledMeVcf() {
+    return hasPrecalledVcfOfType('me')
+}
+
+def boolean hasPrecalledRepeatVcf() {
+    return hasPrecalledVcfOfType('repeat')
+}
+
 // True whenever the case is fully precalled for at least one type - since validateNoMixedCaseInput
 // guarantees such a case has zero fastq/bam/cram rows, this also means no alignment data exists at all
 def boolean hasAnyPrecalledVcf() {
-    return hasPrecalledSnvVcf() || hasPrecalledSvVcf() || hasPrecalledMtVcf()
+    return hasPrecalledSnvVcf() || hasPrecalledSvVcf() || hasPrecalledMtVcf() || hasPrecalledMeVcf() || hasPrecalledRepeatVcf()
 }
 
 def generateReadGroupLine(file, meta, params) {
@@ -378,7 +386,7 @@ def validateNoMixedCaseInput(List rows) {
 
 // Function to collect precalled vcf/tbi pairs per variant type from rows tagged with a "*_vcf" data_type
 def extractPrecalledVcfs(List rows) {
-    def precalled = [snv: null, sv: null, mt: null]
+    def precalled = [snv: null, sv: null, mt: null, me: null, repeat: null]
     rows.each { meta, files ->
         def type = meta.data_type - "_vcf"
         if (precalled[type] && precalled[type] != files) {
@@ -401,13 +409,17 @@ def validateInputParameters() {
 // relevant type must either have a precalled VCF or have its calling explicitly skipped, otherwise it would
 // silently run calling with no input data
 def validatePrecalledVcfCoverage() {
-    def has_snv = hasPrecalledSnvVcf()
-    def has_sv  = hasPrecalledSvVcf()
-    def has_mt  = hasPrecalledMtVcf()
-    if (!has_snv && !has_sv && !has_mt) {
+    def has_snv    = hasPrecalledSnvVcf()
+    def has_sv     = hasPrecalledSvVcf()
+    def has_mt     = hasPrecalledMtVcf()
+    def has_me     = hasPrecalledMeVcf()
+    def has_repeat = hasPrecalledRepeatVcf()
+    if (!has_snv && !has_sv && !has_mt && !has_me && !has_repeat) {
         return
     }
-    def run_mt  = params.analysis_type.matches("wgs|mito") || params.run_mt_for_wes
+    def run_mt     = params.analysis_type.matches("wgs|mito") || params.run_mt_for_wes
+    def run_me     = params.analysis_type.equals("wgs")
+    def run_repeat = params.analysis_type.equals("wgs")
     def missing = []
     if (!has_snv && !parseSkipList(params.skip_subworkflows, 'snv_calling')) {
         missing << 'snv'
@@ -415,8 +427,14 @@ def validatePrecalledVcfCoverage() {
     if (!has_sv && !parseSkipList(params.skip_subworkflows, 'sv_calling')) {
         missing << 'sv'
     }
-    if (run_mt && !has_mt && !parseSkipList(params.skip_subworkflows, 'mt_calling')) {
+    if (run_mt && !has_mt && !parseSkipList(params.skip_subworkflows, 'mt_snv_calling')) {
         missing << 'mt'
+    }
+    if (run_me && !has_me && !parseSkipList(params.skip_subworkflows, 'me_calling')) {
+        missing << 'me'
+    }
+    if (run_repeat && !has_repeat && !parseSkipList(params.skip_subworkflows, 'repeat_calling')) {
+        missing << 'repeat'
     }
     if (missing) {
         error("The samplesheet supplies a precalled VCF for at least one variant type, making this a fully-precalled case with no fastq/bam/cram input for calling. But no precalled VCF was supplied for: ${missing.join(', ')}. Either add a precalled VCF for ${missing.join(', ')}, or skip that calling explicitly via --skip_subworkflows.")
@@ -448,8 +466,7 @@ def checkRequiredParameters(params) {
     // Static requirements that are not influenced by user-defined skips
     def staticRequirements   = [
         analysis_type_wes        : ["target_bed"],
-        variant_caller_sentieon  : ["ml_model"],
-        run_rtgvcfeval           : ["rtg_truthvcfs"]
+        variant_caller_sentieon  : ["ml_model"]
     ]
 
     // Requirements that can be modified by the user using either skip_tools or skip_subworkflows here
@@ -473,8 +490,7 @@ def checkRequiredParameters(params) {
 
     staticRequirements.each { condition, paramsList ->
         if ((condition == "analysis_type_wes" && params.analysis_type == "wes") ||
-            (condition == "variant_caller_sentieon" && params.variant_caller == "sentieon") ||
-            (condition == "run_rtgvcfeval" && params.run_rtgvcfeval)) {
+            (condition == "variant_caller_sentieon" && params.variant_caller == "sentieon")) {
                 mandatoryParams += paramsList
         }
     }
@@ -482,8 +498,11 @@ def checkRequiredParameters(params) {
     def all_skips = params.skip_subworkflows+","+params.skip_tools
     // These are all BAM/alignment-dependent auxiliary steps that are also skipped at runtime whenever
     // the case is fully precalled (no alignment data exists at all), even though that isn't reflected
-    // in --skip_tools/--skip_subworkflows, so their extra params shouldn't be forced mandatory either
-    def alignmentDependentConditions = ['repeat_calling', 'repeat_annotation', 'me_calling', 'me_annotation', 'gens', 'germlinecnvcaller']
+    // in --skip_tools/--skip_subworkflows, so their extra params shouldn't be forced mandatory either.
+    // me_annotation/repeat_annotation are deliberately excluded: like snv/sv/mt_annotation, they have
+    // their own precalled substitute and stay mandatory unless explicitly skipped, regardless of
+    // whether calling ran.
+    def alignmentDependentConditions = ['repeat_calling', 'me_calling', 'gens', 'germlinecnvcaller']
     dynamicRequirements.each { condition, paramsList ->
         def auto_skipped = condition in alignmentDependentConditions && hasAnyPrecalledVcf()
         if (!all_skips.split(',').contains(condition) && !auto_skipped) {
@@ -663,7 +682,6 @@ def toolCitationText() {
         "GATK (McKenna et al., 2010),",
         "MultiQC (Ewels et al. 2016),",
         (params.skip_tools && params.skip_tools.split(',').contains('peddy')) ? "" : "Peddy (Pedersen & Quinlan, 2017),",
-        params.run_rtgvcfeval ? "RTG Tools (Cleary et al., 2015)," : "",
         "SAMtools (Li et al., 2009),",
         (!(params.skip_tools && params.skip_tools.split(',').contains('smncopynumbercaller')) && params.analysis_type.equals("wgs")) ? "SMNCopyNumberCaller (Chen et al., 2020)," : "",
         "Tabix (Li, 2011)",
@@ -787,7 +805,6 @@ def toolBibliographyText() {
         "<li>McKenna, A., Hanna, M., Banks, E., Sivachenko, A., Cibulskis, K., Kernytsky, A., Garimella, K., Altshuler, D., Gabriel, S., Daly, M., & DePristo, M. A. (2010). The Genome Analysis Toolkit: A MapReduce framework for analyzing next-generation DNA sequencing data. Genome Research, 20(9), 1297–1303. https://doi.org/10.1101/gr.107524.110</li>",
         "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: Summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047–3048. https://doi.org/10.1093/bioinformatics/btw354</li>",
         (params.skip_tools && params.skip_tools.split(',').contains('peddy')) ? "" : "<li>Pedersen, B. S., & Quinlan, A. R. (2017). Who’s Who? Detecting and Resolving Sample Anomalies in Human DNA Sequencing Studies with Peddy. The American Journal of Human Genetics, 100(3), 406–413. https://doi.org/10.1016/j.ajhg.2017.01.017</li>",
-        params.run_rtgvcfeval ? "<li>Cleary, J. G., Braithwaite, R., Gaastra, K., Hilbush, B. S., Inglis, S., Irvine, S. A., Jackson, A., Littin, R., Rathod, M., Ware, D., Zook, J. M., Trigg, L., & Vega, F. M. D. L. (2015). Comparing Variant Call Files for Performance Benchmarking of Next-Generation Sequencing Variant Calling Pipelines (p. 023754). bioRxiv. https://doi.org/10.1101/023754</li>" : "",
         "<li>Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., Durbin, R., & 1000 Genome Project Data Processing Subgroup. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352</li>",
         (!(params.skip_tools && params.skip_tools.split(',').contains('smncopynumbercaller')) && params.analysis_type.equals("wgs")) ? "<li>Chen, X., Sanchis-Juan, A., French, C. E., Connell, A. J., Delon, I., Kingsbury, Z., Chawla, A., Halpern, A. L., Taft, R. J., Bentley, D. R., Butchbach, M. E. R., Raymond, F. L., & Eberle, M. A. (2020). Spinal muscular atrophy diagnosis and carrier screening from genome sequencing data. Genetics in Medicine, 22(5), 945–953. https://doi.org/10.1038/s41436-020-0754-0</li>" : "",
         "<li>Li, H. (2011). Tabix: Fast retrieval of sequence features from generic TAB-delimited files. Bioinformatics, 27(5), 718–719. https://doi.org/10.1093/bioinformatics/btq671</li>",

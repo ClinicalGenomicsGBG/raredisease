@@ -1,9 +1,12 @@
 {
     "-profile test_vcf": {
         "content": [
-            103,
+            129,
             {
                 "BCFTOOLS_CONCAT": {
+                    "bcftools": 1.22
+                },
+                "BCFTOOLS_CONCAT_VCFANNO": {
                     "bcftools": 1.22
                 },
                 "BCFTOOLS_ROH": {
@@ -13,6 +16,9 @@
                     "bcftools": 1.22
                 },
                 "BCFTOOLS_VIEW": {
+                    "bcftools": 1.22
+                },
+                "BCFTOOLS_VIEW_FILTER": {
                     "bcftools": 1.22
                 },
                 "BCFTOOLS_VIEW_RHOCALL": {
@@ -51,20 +57,25 @@
                     "addmostseverepli": "1.2.0",
                     "bgzip": 1.21
                 },
-                "ENSEMBLVEP_MT": {
-                    "ensemblvep": 110.1,
+                "ENSEMBLVEP_ME": {
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
+                },
+                "ENSEMBLVEP_MT": {
+                    "ensemblvep": 116.1,
+                    "perl-math-cdf": 0.1,
+                    "tabix": "1.23.1"
                 },
                 "ENSEMBLVEP_SNV": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "ENSEMBLVEP_SV": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "FILTERVEP": {
                     "filtervep": "1.0.0"
@@ -126,6 +137,10 @@
                 "SAMTOOLS_FAIDX_MT": {
                     "samtools": "1.22.1"
                 },
+                "STRANGER": {
+                    "stranger": "0.10.0",
+                    "tabix": 1.23
+                },
                 "SVDB_QUERY_DB": {
                     "svdb": "2.8.4"
                 },
@@ -134,6 +149,9 @@
                     "tabix": 1.21
                 },
                 "TABIX_GNOMAD_AF": {
+                    "tabix": 1.21
+                },
+                "TABIX_TABIX": {
                     "tabix": 1.21
                 },
                 "UCSC_WIGTOBIGWIG": {
@@ -157,6 +175,11 @@
                 }
             },
             [
+                "annotate_mobile_elements",
+                "annotate_mobile_elements/justhusky_me_pli_clinical.vcf.gz",
+                "annotate_mobile_elements/justhusky_me_pli_clinical.vcf.gz.tbi",
+                "annotate_mobile_elements/justhusky_me_pli_research.vcf.gz",
+                "annotate_mobile_elements/justhusky_me_pli_research.vcf.gz.tbi",
                 "annotate_snv",
                 "annotate_snv/genome",
                 "annotate_snv/genome/hugelymodelbat_rhocallviz",
@@ -230,13 +253,16 @@
                 "rank_and_filter/justhusky_sv_ranked_clinical.vcf.gz",
                 "rank_and_filter/justhusky_sv_ranked_clinical.vcf.gz.tbi",
                 "rank_and_filter/justhusky_sv_ranked_research.vcf.gz",
-                "rank_and_filter/justhusky_sv_ranked_research.vcf.gz.tbi"
+                "rank_and_filter/justhusky_sv_ranked_research.vcf.gz.tbi",
+                "repeat_expansions",
+                "repeat_expansions/justhusky_repeat_expansion_stranger.vcf.gz",
+                "repeat_expansions/justhusky_repeat_expansion_stranger.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-07-17T15:55:39.417216514",
+        "timestamp": "2026-08-10T11:47:40.662580991",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.10.4"
+            "nextflow": "26.04.6"
         }
     }
 }

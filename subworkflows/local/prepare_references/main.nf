@@ -21,7 +21,6 @@ include { GATK4_SHIFTFASTA as GATK_SHIFTFASTA               } from '../../../mod
 include { GET_CHROM_SIZES                                   } from '../../../modules/local/get_chrom_sizes'
 include { HISAT2_BUILD as HISAT2_INDEX_GENOME               } from '../../../modules/nf-core/hisat2/build'
 include { LAST_LASTDB as LAST_INDEX_MT                      } from '../../../modules/nf-core/last/lastdb'
-include { RTGTOOLS_FORMAT                                   } from '../../../modules/nf-core/rtgtools/format/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_EXTRACT_MT             } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_GENOME           } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_MT               } from '../../../modules/nf-core/samtools/faidx/main'
@@ -52,8 +51,6 @@ workflow PREPARE_REFERENCES {
         val_mtaligner                // String: "bwa", "bwamem2", or "sentieon"
         val_mtfasta                  // String: path to mitochondrial fasta
         val_run_mt                   // boolean: true if MT analysis will run
-        val_run_rtgvcfeval           // Boolean
-        val_sdf                      // String: path to sdf file
         val_genome_dict              // String: path to genome dictionary
         val_target_bed               // String: path to target bed file
         val_vcfanno_extra            // String: path to additional annotation files used by vcfanno
@@ -82,13 +79,12 @@ workflow PREPARE_REFERENCES {
         ch_mt_dict                     = channel.empty()
         ch_mt_fai                      = channel.empty()
         ch_mt_fasta                    = channel.empty()
-        ch_sdf                         = channel.empty()
         ch_shiftfasta_mtintervals      = channel.empty()
         ch_shiftfasta_mtshiftintervals = channel.empty()
         ch_target_bed_gz_tbi           = channel.value([[:],[],[]])
         ch_target_intervals            = channel.empty()
         ch_vcfanno_extra               = channel.value([[]])
-        ch_vep_resources               = channel.value([[]])
+        ch_vep_resources               = channel.value([[:], []])
 
         ch_genome_fasta = channel.fromPath(val_fasta).map { it -> [[id:it.simpleName], it] }.collect()
         //
@@ -268,17 +264,10 @@ workflow PREPARE_REFERENCES {
         //
         if (val_vep_cache) {
             if (val_vep_cache.endsWith("tar.gz")) {
-                ch_vep_resources = UNTAR_VEP_CACHE (channel.fromPath(val_vep_cache).map { it -> [[id:'vep_cache'], it] }.collect()).untar.map{ _meta, files -> [files]}.collect()
+                ch_vep_resources = UNTAR_VEP_CACHE (channel.fromPath(val_vep_cache).map { it -> [[id:'vep_cache'], it] }.collect()).untar.collect()
             } else {
-                ch_vep_resources = channel.fromPath(val_vep_cache).collect()
+                ch_vep_resources = channel.fromPath(val_vep_cache).map { it -> [[id:'vep_cache'], it] }.collect()
             }
-        }
-        //
-        // RTG tools
-        //
-        if (!val_sdf && val_run_rtgvcfeval) {
-            ch_rtgformat_in = ch_genome_fasta.map { meta, fasta -> return [meta, fasta, [], [] ] }
-            ch_sdf      = RTGTOOLS_FORMAT(ch_rtgformat_in).out.sdf
         }
 
     emit:
@@ -309,9 +298,8 @@ workflow PREPARE_REFERENCES {
         mtshift_fai               = ch_mtshift_fai                 // channel:[ val(meta), path(fai) ]
         mtshift_fasta             = ch_mtshift_fasta               // channel:[ val(meta), path(fasta) ]
         mtshift_intervals         = ch_shiftfasta_mtshiftintervals // channel:[ path(intervals) ]
-        sdf                       = ch_sdf                         // channel:[ val (meta), path(sdf) ]
         target_bed                = ch_target_bed_gz_tbi.collect() // channel:[ val(meta), path(bed), path(tbi) ]
         target_intervals          = ch_target_intervals            // channel:[ path(interval_list) ]
         vcfanno_extra             = ch_vcfanno_extra               // channel:[ [path(vcf), path(tbi)] ]
-        vep_resources             = ch_vep_resources               // channel:[ path(cache) ]
+        vep_resources             = ch_vep_resources               // channel:[ val(meta), path(cache) ]
 }

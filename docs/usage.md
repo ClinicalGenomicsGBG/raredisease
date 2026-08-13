@@ -24,8 +24,7 @@ Table of contents:
       - [9. Mitochondrial annotation](#9-mitochondrial-annotation)
       - [10. Mobile element calling](#10-mobile-element-calling)
       - [11. Mobile element annotation](#11-mobile-element-annotation)
-      - [12. Variant evaluation](#12-variant-evaluation)
-      - [13. Prepare data for CNV visualisation in Gens](#13-prepare-data-for-cnv-visualisation-in-gens)
+      - [12. Prepare data for CNV visualisation in Gens](#12-prepare-data-for-cnv-visualisation-in-gens)
     - [Run the pipeline](#run-the-pipeline)
       - [Direct input in CLI](#direct-input-in-cli)
       - [Import from a config file (recommended)](#import-from-a-config-file-recommended)
@@ -178,22 +177,24 @@ The nf-core/raredisease pipeline can also accept precalled, case-level VCF files
 | `sample` | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. |
 | `vcf`    | Absolute path to a bgzipped, precalled VCF file (`.vcf.gz`).                                                  |
 | `tbi`    | Absolute path to the tabix index of the VCF file (`.vcf.gz.tbi`).                                             |
-| `type`   | The variant type contained in the VCF. One of `snv`, `sv`, or `mt`.                                           |
+| `type`   | The variant type contained in the VCF. One of `snv`, `sv`, `mt`, `me`, or `repeat`.                           |
 
-Each precalled VCF must contain only the variant type it declares in `type`: a nuclear (non-mitochondrial) VCF for `snv`, an MT-only VCF for `mt`, and an SVDB-merged structural variant VCF for `sv`. Since a precalled VCF represents the whole case (it's already jointly called across the family, not a single sample), parents and other unaffected relatives are referenced purely through the existing `paternal_id`/`maternal_id` columns on the proband's row(s) and never get their own samplesheet row — they're assumed to already be genotyped inside the supplied VCF.
+Each precalled VCF must contain only the variant type it declares in `type`: a nuclear (non-mitochondrial) VCF for `snv`, an MT-only VCF for `mt`, an SVDB-merged structural variant VCF for `sv`, an SVDB-merged mobile-element VCF (matching `CALL_MOBILE_ELEMENTS` output) for `me`, and an SVDB-merged repeat-expansion VCF (matching `CALL_REPEAT_EXPANSIONS` output, before Stranger annotation) for `repeat`. Since a precalled VCF represents the whole case (it's already jointly called across the family, not a single sample), parents and other unaffected relatives are referenced purely through the existing `paternal_id`/`maternal_id` columns on the proband's row(s) and never get their own samplesheet row — they're assumed to already be genotyped inside the supplied VCF.
 
-Below is an example samplesheet for a trio where all three variant types have been precalled for the case. Note that `father` and `mother` are referenced by ID only and never appear as their own rows:
+Below is an example samplesheet for a trio where all five variant types have been precalled for the case. Note that `father` and `mother` are referenced by ID only and never appear as their own rows:
 
-| sample  | vcf                | tbi                    | type | sex | phenotype | paternal_id | maternal_id | case_id |
-| ------- | ------------------ | ---------------------- | ---- | --- | --------- | ----------- | ----------- | ------- |
-| proband | proband_snv.vcf.gz | proband_snv.vcf.gz.tbi | snv  | 1   | 2         | father      | mother      | fam_1   |
-| proband | proband_sv.vcf.gz  | proband_sv.vcf.gz.tbi  | sv   | 1   | 2         | father      | mother      | fam_1   |
-| proband | proband_mt.vcf.gz  | proband_mt.vcf.gz.tbi  | mt   | 1   | 2         | father      | mother      | fam_1   |
+| sample  | vcf                   | tbi                       | type   | sex | phenotype | paternal_id | maternal_id | case_id |
+| ------- | --------------------- | ------------------------- | ------ | --- | --------- | ----------- | ----------- | ------- |
+| proband | proband_snv.vcf.gz    | proband_snv.vcf.gz.tbi    | snv    | 1   | 2         | father      | mother      | fam_1   |
+| proband | proband_sv.vcf.gz     | proband_sv.vcf.gz.tbi     | sv     | 1   | 2         | father      | mother      | fam_1   |
+| proband | proband_mt.vcf.gz     | proband_mt.vcf.gz.tbi     | mt     | 1   | 2         | father      | mother      | fam_1   |
+| proband | proband_me.vcf.gz     | proband_me.vcf.gz.tbi     | me     | 1   | 2         | father      | mother      | fam_1   |
+| proband | proband_repeat.vcf.gz | proband_repeat.vcf.gz.tbi | repeat | 1   | 2         | father      | mother      | fam_1   |
 
 **What's possible:**
 
-- Supplying precalled VCFs for all variant types applicable to the case (`snv` + `sv` + `mt` for WGS/mito, or just `snv` + `sv` for WES without `--run_mt_for_wes`) to run annotation/ranking only, with no calling at all.
-- Supplying precalled VCFs for only a subset of types, as long as calling for the remaining type(s) is explicitly disabled with `--skip_subworkflows`. For example, a WGS case with only `snv`/`sv` VCFs needs `--skip_subworkflows mt_calling` added on the command line, since MT calling would otherwise run by default for WGS but there's no alignment data to call it from.
+- Supplying precalled VCFs for all variant types applicable to the case (`snv` + `sv` + `mt` + `me` + `repeat` for WGS, `snv` + `sv` + `mt` for mito, or just `snv` + `sv` for WES without `--run_mt_for_wes`) to run annotation/ranking only, with no calling at all.
+- Supplying precalled VCFs for only a subset of types, as long as calling for the remaining type(s) is explicitly disabled with `--skip_subworkflows`. For example, a WGS case with only `snv`/`sv` VCFs needs `--skip_subworkflows mt_snv_calling,me_calling,repeat_calling` added on the command line, since MT, mobile-element, and repeat-expansion calling would otherwise run by default for WGS but there's no alignment data to call them from.
 - Mixing precalled and freshly-called cases across **different** runs/samplesheets — the restrictions below apply per case, not pipeline-wide.
 
 **What's not possible** (the pipeline validates these and errors out with a specific message rather than silently producing empty output):
@@ -201,7 +202,7 @@ Below is an example samplesheet for a trio where all three variant types have be
 - Mixing `vcf` rows with `fastq`/`spring`/`bam`/`cram` rows for the **same case**. A row in the samplesheet may only specify one data type (`fastq`, `spring`, `bam`, `cram`, or `vcf`) — mixing, for example, `fastq_1` and `vcf` in the same row is rejected by the schema — and a case as a whole must be either fully precalled or fully processed from raw/aligned reads, never both.
 - Leaving a variant type uncovered. If a case has any precalled VCF, every other type that's still relevant to the analysis must either also have a precalled VCF or have its calling explicitly skipped via `--skip_subworkflows` — the pipeline checks this upfront and errors out immediately, before any channels are built, naming exactly which type(s) are missing.
 - Supplying two different VCFs for the same `type` within the same case (conflicting precalled VCFs for one case).
-- A `type` value other than `snv`, `sv`, or `mt` (schema-enforced).
+- A `type` value other than `snv`, `sv`, `mt`, `me`, or `repeat` (schema-enforced). Note there is no separate `mt_sv` type: nuclear and mitochondrial SV calls (MitoSalt/SaltShaker) are merged into one VCF before annotation/ranking, so a `sv` VCF is expected to already include mitochondrial SV calls if you want them represented — merge them in yourself before supplying it.
 
 #### Reference files and parameters
 
@@ -232,9 +233,9 @@ The pipeline is modular — individual tools and subworkflows can be skipped usi
 | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `fastp`, `fastqc`, `gatkcontamination`, `gens`, `germlinecnvcaller`, `ngsbits`, `peddy`, `smncopynumbercaller`, `vcf2cytosure`, `verifybamid` |
 
-| `--skip_subworkflows`                                                                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `generate_clinical_set`, `me_annotation`, `me_calling`, `mt_annotation`, `mt_calling`, `mt_subsample`, `repeat_annotation`, `repeat_calling`, `snv_annotation`, `snv_calling`, `sv_annotation`, `sv_calling` |
+| `--skip_subworkflows`                                                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generate_clinical_set`, `me_annotation`, `me_calling`, `mt_annotation`, `mt_snv_calling`, `mt_subsample`, `mt_sv_calling`, `repeat_annotation`, `repeat_calling`, `snv_annotation`, `snv_calling`, `sv_annotation`, `sv_calling` |
 
 nf-core/raredisease consists of several tools used for various purposes. For convenience, we have grouped those tools under the following categories:
 
@@ -364,7 +365,7 @@ Targeted (hybrid-capture) metrics are produced only when a target BED is supplie
 | vcfanno_toml<sup>3</sup>             | vep_filters/vep_filters_scout_fmt<sup>10</sup> |
 | vep_cache_version                    | cadd_resources<sup>11</sup>                    |
 | vep_cache<sup>4</sup>                | run_vcfanno_db_sanity_check<sup>12</sup>       |
-| gnomad_af<sup>5</sup>                |                                                |
+| gnomad_af<sup>5</sup>                | pre_vep_snv_filter_expression<sup>13</sup>     |
 | score_config_snv<sup>6</sup>         |                                                |
 | variant_consequences_snv<sup>7</sup> |                                                |
 | vep_plugin_files<sup>8</sup>         |                                                |
@@ -384,6 +385,7 @@ no header and the following columns: `CHROM POS REF_ALLELE,ALT_ALLELE AF`. Sampl
 <sup>10</sup> This file contains a list of candidate genes (with [HGNC](https://www.genenames.org/) IDs) that is used to split the variants into candidate variants and research variants. Research variants contain all the variants, while candidate variants are a subset of research variants and are associated with candidate genes. Sample file [here](https://github.com/nf-core/test-datasets/blob/raredisease/reference/hgnc.txt). Not required if `--skip_subworkflows generate_clinical_set` is set.<br />
 <sup>11</sup>Path to a folder containing cadd annotations. Equivalent of the data/annotations/ folder described [here](https://github.com/kircherlab/CADD-scripts/#manual-installation), and it is used to calculate CADD scores for small indels. <br />
 <sup>12</sup>When set to `true`, each vcfanno database file listed in `vcfanno_resources` is checked for records (non-header lines). Any database with zero records is removed from the vcfanno TOML config before annotation runs to prevent vcfanno from crashing on default resource files. Default: `false`.<br />
+<sup>13</sup>bcftools expression used to exclude SNVs before VEP annotation, applied with `bcftools view --exclude`. Set stricter filters to reduce the number of variants processed downstream. Default: `INFO/GNOMADAF > 0.70 | INFO/GNOMADAF_popmax > 0.70`.<br />
 
 :::note
 We use CADD only to annotate small indels. To annotate SNVs with precomputed CADD scores, pass the file containing CADD scores as a resource to vcfanno instead. Files containing the precomputed CADD scores for SNVs can be downloaded from [here](https://cadd.gs.washington.edu/download) (download files listed under the description: "All possible SNVs of GRCh3<7/8>/hg3<7/8>")
@@ -441,17 +443,7 @@ Mitochondrial analysis runs automatically for `wgs` and `mito` analysis types. F
 
 <sup>1</sup> A CSV file that describes the databases (VCFs) used by SVDB for annotating mobile elements with allele frequencies. Sample file [here](https://github.com/nf-core/test-datasets/blob/raredisease/reference/svdb_querydb_files.csv).
 
-##### 12. Variant evaluation
-
-| Mandatory                  | Optional |
-| -------------------------- | -------- |
-| run_rtgvcfeval<sup>1</sup> | sdf      |
-| rtg_truthvcfs<sup>2</sup>  |          |
-
-<sup>1</sup> This parameter is set to false by default, set it to true if if you'd like to run the evaluation subworkflow
-<sup>2</sup> A CSV file that describes the truth VCF files used by RTG Tools' vcfeval for evaluating SNVs. Sample file [here](https://github.com/nf-core/test-datasets/blob/raredisease/reference/rtg_example.csv). The file contains four columns `samplename,vcf,bedregions,evaluationregions` where samplename is the user assigned samplename in the input samplesheet, vcf is the path to the truth vcf file, bedregions and evaluationregions are the path to the bed files that are supposed to be passed through --bed_regions and --evaluation_regions options of vcfeval.
-
-##### 13. Prepare data for CNV visualisation in Gens
+##### 12. Prepare data for CNV visualisation in Gens
 
 Optionally the read data can be prepared for CNV visualization in [Gens](https://github.com/Clinical-Genomics-Lund/gens). You can turn it off it by supplying the option `--skip_tools gens`.
 

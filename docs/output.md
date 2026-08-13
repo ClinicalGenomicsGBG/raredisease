@@ -74,7 +74,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
     - [Mobile element analysis](#mobile-element-analysis)
       - [Calling mobile elements](#calling-mobile-elements)
       - [Annotating mobile elements](#annotating-mobile-elements)
-    - [Variant evaluation](#variant-evaluation)
     - [Gens](#gens)
     - [Peddy](#peddy)
     - [Pedigree](#pedigree)
@@ -366,6 +365,8 @@ The pipeline performs variant calling using [Sentieon DNAscope](https://support.
 
 #### Expansion Hunter
 
+> **NB**: This section is skipped if a precalled repeat-expansion VCF is supplied in the samplesheet (see [Samplesheet for VCF file input](usage.md#samplesheet-for-vcf-file-input)); the supplied VCF is used directly for Stranger annotation instead, and no ExpansionHunter output is produced.
+
 [Expansion Hunter](https://github.com/Illumina/ExpansionHunter) aims to estimate sizes of repeat sequences by performing a targeted search through alignments that span, flank, and are fully contained in each repeat. The files generated are ready to be used with [REViewer](https://github.com/Illumina/REViewer).
 
 <details markdown="1">
@@ -576,6 +577,8 @@ We recommend using vcfanno to annotate SNVs with precomputed CADD scores (files 
 
 #### Calling mobile elements
 
+> **NB**: This section is skipped if a precalled ME VCF is supplied in the samplesheet (see [Samplesheet for VCF file input](usage.md#samplesheet-for-vcf-file-input)); the supplied VCF is used directly for annotation instead, and no `call_mobile_elements/` output is produced.
+
 Mobile elements are identified from the bam file using [RetroSeq](https://github.com/tk2/RetroSeq) and the indiviual calls are merged to case VCF using SVDB.
 
 <details markdown="1">
@@ -599,33 +602,6 @@ The mobile elements are annotated with allele frequencies and allele counts usin
   - `<case_id>_mobile_elements_annotated_research.vcf.gz.tbi`: Index for VCF containting the complete set of annotated mobile elements.
   - `<case_id>_mobile_elements_annotated_clinical.vcf.gz`: VCF containing selected annotated mobile elements.
   - `<case_id>_mobile_elements_annotated_clincial.vcf.gz.tbi`: Index for VCF containing selected annotated mobile elements.
-
-</details>
-
-### Variant evaluation
-
-Provided a truth set, SNVs can be evaluated using RTG Tools' vcfeval engine. Output files generated are listed below with a short description, but if you'd like to know more about what's in each of the files, refer to RTG Tools documentation [here](https://www.animalgenome.org/bioinfo/resources/manuals/RTGOperationsManual.pdf).
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `rtgvcfeval/`
-  - `<sample_id>_vcfeval.fn.vcf.gz`: contains variants from the baseline VCF which were not correctly called.
-  - `<sample_id>_vcfeval.fn.vcf.gz.tbi`: index of the \*fn.vcf file
-  - `<sample_id>_vcfeval.fp.vcf.gz`: contains variants from the calls VCF which do not agree with baseline variants.
-  - `<sample_id>_vcfeval.fp.vcf.gz.tbi`: index of the \*fp.vcf file
-  - `<sample_id>_vcfeval.non_snp_roc.tsv.gz`: contains ROC data derived from those variants which were not represented as
-    SNPs.
-  - `<sample_id>_vcfeval.phasing.txt`: containing the data on the phasing
-  - `<sample_id>_vcfeval.snp_roc.tsv.gz`: contains ROC data derived from only those variants which were represented as SNPs.
-  - `<sample_id>_vcfeval.summary.txt`: contains the match summary statistics printed to standard output.
-  - `<sample_id>_vcfeval.tp-baseline.vcf.gz`: contains those variants from the baseline VCF which agree with variants in the
-    calls VCF.
-  - `<sample_id>_vcfeval.tp-baseline.vcf.gz.tbi`: index of the \*tp-baseline.vcf file
-  - `<sample_id>_vcfeval.tp.vcf.gz`: contains those variants from the calls VCF which agree with variants in the baseline VCF
-  - `<sample_id>_vcfeval.tp.vcf.gz.tbi`: index of the \*tp.vcf file
-  - `<sample_id>_vcfeval.weighted_roc.tsv.gz`: contains ROC data derived from all analyzed call variants, regardless of their
-    representation.
 
 </details>
 

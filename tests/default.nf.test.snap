@@ -15,6 +15,9 @@
                 "BCFTOOLS_CONCAT_ME": {
                     "bcftools": 1.22
                 },
+                "BCFTOOLS_CONCAT_VCFANNO": {
+                    "bcftools": 1.22
+                },
                 "BCFTOOLS_MERGE_MT": {
                     "bcftools": 1.22
                 },
@@ -132,24 +135,24 @@
                     "deepvariant": "1.9.0"
                 },
                 "ENSEMBLVEP_ME": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "ENSEMBLVEP_MT": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "ENSEMBLVEP_SNV": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "ENSEMBLVEP_SV": {
-                    "ensemblvep": 110.1,
+                    "ensemblvep": 116.1,
                     "perl-math-cdf": 0.1,
-                    "tabix": 1.21
+                    "tabix": "1.23.1"
                 },
                 "EXPANSIONHUNTER": {
                     "bgzip": "1.22.1",
@@ -252,6 +255,10 @@
                 },
                 "MARKDUPLICATES": {
                     "picard": "3.4.0"
+                },
+                "MERGE_NUCLEAR_AND_MT_SVS": {
+                    "bcftools": 1.23,
+                    "svdb": "2.8.4"
                 },
                 "ME_SPLIT_ALIGNMENT": {
                     "samtools": "1.22.1"
@@ -443,6 +450,9 @@
                     "tabix": 1.21
                 },
                 "TABIX_ME_SPLIT": {
+                    "tabix": 1.21
+                },
+                "TABIX_NUCLEAR_AND_MT_SVS": {
                     "tabix": 1.21
                 },
                 "TABIX_TABIX": {
@@ -1332,10 +1342,10 @@
                 "slowlycivilbuck.cgh:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
-        "timestamp": "2026-06-26T14:16:17.160260766",
+        "timestamp": "2026-08-10T11:49:57.666777048",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.3"
+            "nextflow": "26.04.6"
         }
     }
 }

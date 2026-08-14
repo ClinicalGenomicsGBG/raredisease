@@ -570,7 +570,8 @@ workflow RAREDISEASE {
             .join(RENAME_BAI.out.output, failOnMismatch:true, failOnDuplicate:true)
 
         CALL_REPEAT_EXPANSIONS (
-            ch_repeat_bam,
+            RENAME_BAM.out.output.join(RENAME_BAI.out.output, failOnMismatch:true, failOnDuplicate:true),
+            QC_BAM.out.ngsbits_samplegender_tsv,
             ch_variant_catalog,
             ch_case_info,
             ch_genome_fasta,

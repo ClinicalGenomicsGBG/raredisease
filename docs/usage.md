@@ -336,14 +336,17 @@ Targeted (hybrid-capture) metrics are produced only when a target BED is supplie
 
 ##### 5. Variant calling - Structural variants
 
-| Mandatory | Optional                           |
-| --------- | ---------------------------------- |
-|           | target_bed                         |
-|           | bwa                                |
-|           | manta_call_regions<sup>1</sup>     |
-|           | manta_call_regions_tbi<sup>1</sup> |
+| Mandatory                | Optional                           |
+| ------------------------ | ---------------------------------- |
+| canvas_kmer_fasta        | target_bed                         |
+| canvas_genomesizes       | bwa                                |
+| canvas_male_ploidy_vcf   | manta_call_regions<sup>1</sup>     |
+| canvas_female_ploidy_vcf | manta_call_regions_tbi<sup>1</sup> |
+| canvas_filter_bed        | canvas_common_cnvs_bed             |
+|                          | canvas_reformat_vcf<sup>2</sup>    |
 
 <sup>1</sup> A bgzipped BED file (`.bed.gz`) and its tabix index (`.bed.gz.tbi`) restricting Manta's SV calling to specific regions. Both parameters must be supplied together. Only applied for WGS; for WES, Manta always uses `target_bed` and these parameters have no effect. Useful for reducing runtime on references with many short contigs such as GRCh38 by limiting analysis to primary chromosomes.
+<sup>2</sup>Defaults to `true`. Reformats Canvas VCF output for downstream analysis.
 
 ##### 6. Copy number variant calling
 

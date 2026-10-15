@@ -27,7 +27,7 @@
                     },
                     "bcftools/norm": {
                         "branch": "master",
-                        "git_sha": "6383d8fe58f9498eecd5aa303e71a4a932d1e9f6",
+                        "git_sha": "feef37435aea56816adf4b3bde1fc76aac327a8d",
                         "installed_by": ["modules"]
                     },
                     "bcftools/pluginsetgt": {
@@ -37,7 +37,7 @@
                     },
                     "bcftools/reheader": {
                         "branch": "master",
-                        "git_sha": "6383d8fe58f9498eecd5aa303e71a4a932d1e9f6",
+                        "git_sha": "feef37435aea56816adf4b3bde1fc76aac327a8d",
                         "installed_by": ["modules"]
                     },
                     "bcftools/roh": {
@@ -55,6 +55,11 @@
                         "git_sha": "6383d8fe58f9498eecd5aa303e71a4a932d1e9f6",
                         "installed_by": ["modules", "vcf_filter_bcftools_ensemblvep"]
                     },
+                    "bedtools/complement": {
+                        "branch": "master",
+                        "git_sha": "eec8f61394d1c283ae5d40957ef304b94cdd53d9",
+                        "installed_by": ["modules"]
+                    },
                     "bedtools/genomecov": {
                         "branch": "master",
                         "git_sha": "88d43dad73a675e66bff49ebb57fe657a5909018",
@@ -63,6 +68,11 @@
                     "bedtools/slop": {
                         "branch": "master",
                         "git_sha": "88d43dad73a675e66bff49ebb57fe657a5909018",
+                        "installed_by": ["modules"]
+                    },
+                    "bedtools/subtract": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
                         "installed_by": ["modules"]
                     },
                     "bwa/index": {

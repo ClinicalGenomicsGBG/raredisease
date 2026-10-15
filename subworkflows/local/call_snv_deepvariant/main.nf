@@ -72,7 +72,7 @@ workflow CALL_SNV_DEEPVARIANT {
             .map{_meta,bed,tbi -> return [bed, tbi]}
 
         ch_annotate_in = REMOVE_DUPLICATES_GL.out.vcf
-            .join(REMOVE_DUPLICATES_GL.out.tbi)
+            .join(REMOVE_DUPLICATES_GL.out.index)
             .combine(ch_varcallerbed)
             .combine(ch_foundin_header)
             .map { meta, vcf, vcf_tbi, bed, bed_tbi, hdr -> return [meta, vcf, vcf_tbi, bed, bed_tbi, [], hdr, []] }

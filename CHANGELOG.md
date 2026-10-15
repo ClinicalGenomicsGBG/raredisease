@@ -238,6 +238,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add find/concatenate step to concatenate saltshaker classification files before creating the html report, so the final report is case-level. [#826](https://github.com/nf-core/raredisease/pull/826)
 - Extended vcfanno database sanity check to include extra vcfanno resources (`vcfanno_extra`) alongside the main resources, and moved the check upstream to `raredisease.nf` so it covers both genome and mitochondrial SNV annotation subworkflows [#834](https://github.com/nf-core/raredisease/pull/834)
 - Add full test to call_sv_MT subworkflow [#874](https://github.com/nf-core/raredisease/pull/874)
+- CNV calling using Canvas [#1](https://github.com/ClinicalGenomicsGBG/nf-core-raredisease/pull/1)
 
 ### `Changed`
 

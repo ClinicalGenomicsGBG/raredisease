@@ -6,22 +6,60 @@
                     [
                         "amusingmarmoset_tiddit.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
                         "amusingmarmoset_manta.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
-                        "amusingmarmoset_cnvnator.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "amusingmarmoset_cnvnator.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                        "ACC13778A1.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "ACC13778A1",
+                            "sample": "ACC13778A1",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A1\\tPL:illumina\\tSM:ACC13778A1'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 2,
+                            "paternal": "ACC13778A3",
+                            "maternal": "ACC13778A2",
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "canvas_seg": [
+                    [
+                        {
+                            "id": "ACC13778A1",
+                            "sample": "ACC13778A1",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A1\\tPL:illumina\\tSM:ACC13778A1'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 2,
+                            "paternal": "ACC13778A3",
+                            "maternal": "ACC13778A2",
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "vcfs": [
                     [
                         "amusingmarmoset_tiddit.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
                         "amusingmarmoset_manta.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
-                        "amusingmarmoset_cnvnator.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "amusingmarmoset_cnvnator.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                        "ACC13778A1.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-08-27T15:55:01.111772544",
+        "timestamp": "2026-10-07T14:43:22.020377846",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
         }
     },
     "CALL_SV - wgs, minimal dataset": {

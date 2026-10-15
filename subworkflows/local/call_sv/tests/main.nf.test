@@ -15,29 +15,45 @@ nextflow_workflow {
 
     config "./nextflow.config"
 
-    test("CALL_SV - wgs, minimal dataset") {
-
-        setup {
-            run("BWA_INDEX") {
-                script "modules/nf-core/bwa/index/main.nf"
-                process {
-                    """
-                    input[0] = channel.of([
-                        [id:'genome'],
-                        file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)
-                    ])
-                    """
-                }
+    setup {
+        run("BWA_INDEX") {
+            script "modules/nf-core/bwa/index/main.nf"
+            process {
+                """
+                input[0] = channel.of([
+                    [id:'genome'],
+                    file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)
+                ])
+                """
             }
         }
+    }
+
+    test("CALL_SV - wgs, minimal dataset") {
 
         when {
             workflow {
                 """
                 input[0]  = BWA_INDEX.out.index.collect()
-                input[1]  = channel.of([id:'amusingmarmoset'])
-                input[2]  = channel.of([[id:'gcnvcaller'], []])
-                input[3]  = channel.of(
+                input[1]  = channel.of([[],[]])
+                input[2]  = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[3]  = channel.of("chr22\t0\t16569800", "chr22\t16610000\t50818468")
+                    .collectFile(name: 'test_filter.bed', newLine:true)
+                    .map { file -> [ [id:'GRCh38'], file ]}
+                input[4]  = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6]  = channel.of([id:'amusingmarmoset'])
+                input[7]  = channel.of([[id:'gcnvcaller'], []])
+                input[8]  = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam.bai', checkIfExists: true)],
                     [${TestData.sample('ACC13778A2')},
@@ -45,7 +61,7 @@ nextflow_workflow {
                     [${TestData.sample('ACC13778A3')},
                      file(params.alignment + '/ACC13778A3_sorted_md.bam.bai', checkIfExists: true)]
                 )
-                input[4]  = channel.of(
+                input[9]  = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam', checkIfExists: true)],
                     [${TestData.sample('ACC13778A2')},
@@ -53,7 +69,7 @@ nextflow_workflow {
                     [${TestData.sample('ACC13778A3')},
                      file(params.alignment + '/ACC13778A3_sorted_md.bam', checkIfExists: true)]
                 )
-                input[5]  = channel.of(
+                input[10] = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam', checkIfExists: true),
                      file(params.alignment + '/ACC13778A1_sorted_md.bam.bai', checkIfExists: true)],
@@ -64,14 +80,29 @@ nextflow_workflow {
                      file(params.alignment + '/ACC13778A3_sorted_md.bam', checkIfExists: true),
                      file(params.alignment + '/ACC13778A3_sorted_md.bam.bai', checkIfExists: true)]
                 )
-                input[6]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.dict', checkIfExists: true)]).collect()
-                input[7]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta.fai', checkIfExists: true)]).collect()
-                input[8]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)]).collect()
-                input[9]  = channel.value([[], []])
-                input[10] = channel.of([[id:'ploidy'], []])
-                input[11] = channel.of([[]])
-                input[12] = true
-                input[13] = 'wgs'
+                input[11] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.dict', checkIfExists: true)]).collect()
+                input[12] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta.fai', checkIfExists: true)]).collect()
+                input[13] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)]).collect()
+                input[14] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[15] = channel.value([[], []])
+                input[16] = channel.of([[id:'ploidy'], []])
+                input[17] = channel.of([[]])
+                input[18] = channel.of(
+                    [${TestData.sample('ACC13778A1')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)],
+                    [${TestData.sample('ACC13778A2')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)],
+                    [${TestData.sample('ACC13778A3')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)]
+                )
+                input[19] = channel.empty()
+                input[20] = true
+                input[21] = 'wgs'
+                input[22] = true
+                input[23] = 'cnvnator'
                 """
             }
         }
@@ -93,10 +124,26 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0]  = channel.of([[id:'bwa'], []])
-                input[1]  = channel.of([id:'amusingmarmoset'])
-                input[2]  = channel.of([[id:'gcnvcaller'], []])
-                input[3]  = channel.of(
+                input[0]  = BWA_INDEX.out.index.collect()
+                input[1]  = channel.of([[],[]])
+                input[2]  = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[3]  = channel.of("chr22\t0\t16569800", "chr22\t16610000\t50818468")
+                    .collectFile(name: 'test_filter.bed', newLine:true)
+                    .map { file -> [ [id:'GRCh38'], file ]}
+                input[4]  = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6]  = channel.of([id:'amusingmarmoset'])
+                input[7]  = channel.of([[id:'gcnvcaller'], []])
+                input[8]  = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam.bai', checkIfExists: true)],
                     [${TestData.sample('ACC13778A2')},
@@ -104,7 +151,7 @@ nextflow_workflow {
                     [${TestData.sample('ACC13778A3')},
                      file(params.alignment + '/ACC13778A3_sorted_md.bam.bai', checkIfExists: true)]
                 )
-                input[4]  = channel.of(
+                input[9]  = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam', checkIfExists: true)],
                     [${TestData.sample('ACC13778A2')},
@@ -112,7 +159,7 @@ nextflow_workflow {
                     [${TestData.sample('ACC13778A3')},
                      file(params.alignment + '/ACC13778A3_sorted_md.bam', checkIfExists: true)]
                 )
-                input[5]  = channel.of(
+                input[10] = channel.of(
                     [${TestData.sample('ACC13778A1')},
                      file(params.alignment + '/ACC13778A1_sorted_md.bam', checkIfExists: true),
                      file(params.alignment + '/ACC13778A1_sorted_md.bam.bai', checkIfExists: true)],
@@ -123,14 +170,29 @@ nextflow_workflow {
                      file(params.alignment + '/ACC13778A3_sorted_md.bam', checkIfExists: true),
                      file(params.alignment + '/ACC13778A3_sorted_md.bam.bai', checkIfExists: true)]
                 )
-                input[6]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.dict', checkIfExists: true)]).collect()
-                input[7]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta.fai', checkIfExists: true)]).collect()
-                input[8]  = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)]).collect()
-                input[9]  = channel.value([[], []])
-                input[10] = channel.of([[id:'ploidy'], []])
-                input[11] = channel.of([[]])
-                input[12] = true
-                input[13] = 'wgs'
+                input[11] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.dict', checkIfExists: true)]).collect()
+                input[12] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta.fai', checkIfExists: true)]).collect()
+                input[13] = channel.of([[id:'genome'], file(params.reference_sliced + '/minimal_reference.fasta', checkIfExists: true)]).collect()
+                input[14] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[15] = channel.value([[], []])
+                input[16] = channel.of([[id:'ploidy'], []])
+                input[17] = channel.of([[]])
+                input[18] = channel.of(
+                    [${TestData.sample('ACC13778A1')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)],
+                    [${TestData.sample('ACC13778A2')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)],
+                    [${TestData.sample('ACC13778A3')},
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)]
+                )
+                input[19] = channel.empty()
+                input[20] = true
+                input[21] = 'wgs'
+                input[22] = true
+                input[23] = 'cnvnator,canvas'
                 """
             }
         }

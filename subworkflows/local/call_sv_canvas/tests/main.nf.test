@@ -1,0 +1,249 @@
+nextflow_workflow {
+
+    name "Test Workflow CALL_SV_CANVAS"
+    script "subworkflows/local/call_sv_canvas/main.nf"
+    workflow "CALL_SV_CANVAS"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "call_sv_canvas"
+
+    tag "bedtools/subtract"
+    tag "bedtools/complement"
+    tag "bcftools/norm"
+    tag "bcftools/view"
+    tag "bcftools/reheader"
+    tag "canvas/germline"
+    tag "gawk"
+    tag "tabix/bgzip"
+
+    // Real (non-stub) test using chr22 test data (same fixtures used by the
+    // canvas/germline module tests) to validate that BEDTOOLS_SUBTRACT and
+    // BEDTOOLS_COMPLEMENT correctly combine ch_target_bed and
+    // ch_canvas_filter_bed into the final Canvas filter BED.
+    //
+    // ch_target_bed spans the whole of chr22, while ch_canvas_filter_bed
+    // marks the two regions of chr22 that are NOT covered by the chr22 test
+    // data (mirrors the commented-out real tests in
+    // modules/local/canvas/germline/tests/main.nf.test). Subtracting the
+    // filter from the target therefore yields exactly the region that IS
+    // covered by test data, and complementing that region against the chr22
+    // .fai should reconstruct (approximately) the original filter regions -
+    // proving BEDTOOLS_SUBTRACT + BEDTOOLS_COMPLEMENT round-trip correctly
+    // on real genomic coordinates.
+    test("CALL_SV_CANVAS - wgs, target and filter bed") {
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam.bai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)
+                ])
+                input[2] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[3] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[4] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6] = channel.of("chr22\t0\t16569800", "chr22\t16610000\t50818468").collectFile(name: 'test_filter.bed', newLine:true)
+                    .map { file -> [[id:'GRCh38'], file]}
+                input[7] = channel.of("chr22\t0\t50818468").collectFile(name: 'test_target.bed', newLine:true)
+                    .map { file -> [[id:'GRCh38'], file, []]}
+                input[8] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta.fai', checkIfExists: true)
+                ])
+                input[9] = channel.of([[], []])
+                input[10] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert path(workflow.out.vcf[0][1]).exists() },
+                { assert path(workflow.out.seg[0][1]).exists() },
+                { assert snapshot(
+                    path(workflow.out.vcf[0][1]).vcf.variantsMD5,
+                    workflow.out.seg.collect { meta, seg -> file(seg).name }
+                ).match() }
+            )
+        }
+    }
+
+    // Stub test: no target BED provided. ch_subtract_in should be filtered
+    // out (since the target bed value is falsey []), so BEDTOOLS_SUBTRACT
+    // and BEDTOOLS_COMPLEMENT are skipped, and ch_canvas_filter should fall
+    // back to the raw ch_canvas_filter_bed value untouched.
+    test("CALL_SV_CANVAS - wgs, no target bed, stub") {
+
+        options "-stub"
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam.bai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)
+                ])
+                input[2] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[3] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[4] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6] = channel.of("chr22\t0\t16569800", "chr22\t16610000\t50818468").collectFile(name: 'test_filter.bed', newLine:true)
+                    .map { file -> [[id:'GRCh38'], file]}
+                input[7] = channel.of([[],[], []])
+                input[8] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta.fai', checkIfExists: true)
+                ])
+                input[9] = channel.of([[], []])
+                input[10] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    // Stub test: val_reformat_vcf = true. Should run the
+    // BCFTOOLS_NORM -> GAWK_REFORMAT -> TABIX_BGZIP branch.
+    test("CALL_SV_CANVAS - wgs, val_reformat_vcf true, stub") {
+
+        options "-stub"
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam.bai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)
+                ])
+                input[2] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[3] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[4] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6] = channel.of([[],[]])
+                input[7] = channel.of([[],[], []])
+                input[8] = channel.of([[],[]])
+                input[9] = channel.of([[], []])
+                input[10] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+
+    // Stub test: val_reformat_vcf = false. Should run the plain
+    // BCFTOOLS_VIEW branch instead of the norm/reformat/bgzip chain.
+    test("CALL_SV_CANVAS - wgs, val_reformat_vcf false, stub") {
+
+        options "-stub"
+
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/NA12878.chr22.bam.bai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'NA12878', sex:1 ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/NA12878_GIAB.chr22.vcf.gz', checkIfExists: true)
+                ])
+                input[2] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true)
+                ])
+                input[3] = channel.of([
+                    [ id:'GRCh38' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/GenomeSize.xml', checkIfExists: true)
+                ])
+                input[4] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[5] = channel.of([
+                    [ id:'ploidy' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/vcf/empty.vcf.gz', checkIfExists: true)
+                ])
+                input[6] = channel.of([[],[]])
+                input[7] = channel.of([[],[], []])
+                input[8] = channel.of([[],[]])
+                input[9] = channel.of([[], []])
+                input[10] = false
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() }
+            )
+        }
+    }
+}

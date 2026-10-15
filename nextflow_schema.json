@@ -105,6 +105,54 @@
                     "description": "Path to the directory containing cadd annotations.",
                     "help_text": "This folder contains the uncompressed files that would otherwise be in data/annotation folder as described in https://github.com/kircherlab/CADD-scripts/#manual-installation."
                 },
+                "canvas_common_cnvs_bed": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.bed(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Optional BED file of common CNVs supplied to Canvas."
+                },
+                "canvas_filter_bed": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.bed(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas exclusion BED for problematic regions such as centromeres and telomeres."
+                },
+                "canvas_female_ploidy_vcf": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.vcf(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas ploidy VCF for female samples."
+                },
+                "canvas_genomesizes": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.xml$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Illumina Canvas GenomeSize XML reference."
+                },
+                "canvas_kmer_fasta": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.f(ast)?a$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas k-mer reference FASTA."
+                },
+                "canvas_male_ploidy_vcf": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.vcf(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas ploidy VCF for male samples."
+                },
                 "fai": {
                     "type": "string",
                     "exists": true,
@@ -790,11 +838,24 @@
                     "fa_icon": "fas fa-align-center",
                     "description": "Interval in the reference that will be used in the software. Used only by sentieon."
                 },
+                "cnv_caller": {
+                    "type": "string",
+                    "description": "Comma-separated list of CNV callers to run.",
+                    "pattern": "cnvnator(,canvas)?|canvas(,cnvnator)?",
+                    "fa_icon": "fas fa-copy",
+                    "default": "cnvnator"
+                },
                 "cnvnator_binsize": {
                     "type": "integer",
                     "description": "Bin size for CNVnator",
                     "default": 1000,
                     "fa_icon": "fas fa-align-center"
+                },
+                "canvas_reformat_vcf": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies whether to reformat the Canvas VCF output to match the expected format for downstream analysis.",
+                    "fa_icon": "fas fa-toggle-on"
                 },
                 "sentieon_dnascope_pcr_indel_model": {
                     "type": "string",

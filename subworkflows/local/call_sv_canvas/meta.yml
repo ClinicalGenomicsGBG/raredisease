@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "CALL_SV_CANVAS"
+description: |
+  Subworkflow to run Canvas for germline CNV calling. Accepts BAM (+BAM index), ploidy VCFs,
+  reference FASTA, genome sizes and optional BEDs for filtering/targeting. Produces a VCF
+  and a SEG file suitable for downstream reporting.
+keywords:
+  - canvas
+  - cnv
+  - germline
+  - structural-variation
+  - bedtools
+components:
+  - bedtools/subtract
+  - bedtools/complement
+  - bcftools/reheader
+  - bcftools/norm
+  - bcftools/view
+  - canvas/germline
+  - gawk
+  - tabix/bgzip
+input:
+  - ch_bam_bai:
+      description: Aligned BAMs for samples. Must be aligned and indexed
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - bam:
+            type: path
+            description: BAM file
+        - bai:
+            type: path
+            description: BAM index file
+  - ch_snv:
+      description: Germline SNV VCFs for samples.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - vcf:
+            type: path
+            description: SNV VCF file
+  - ch_kmer_fasta:
+      description: Canvas-ready reference FASTA.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - fasta:
+            type: path
+            description: Reference FASTA file
+  - ch_genomesizes:
+      description: Illumina-style GenomeSize.xml
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - genomesizes:
+            type: path
+            description: GenomeSize.xml file
+  - ch_m_ploidy_vcf:
+      description: Ploidy VCF for male samples.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - male_ploidy_vcf:
+            type: path
+            description: Ploidy VCF file for male samples
+  - ch_f_ploidy_vcf:
+      description: Ploidy VCF for female samples.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - female_ploidy_vcf:
+            type: path
+            description: Ploidy VCF file for female samples
+  - ch_canvas_filter_bed:
+      description: BED file containing regions to exclude from Canvas calling. This is typically centromers but can include other problematic regions.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - canvas_filter_bed:
+            type: path
+            description: Canvas filter BED file
+  - ch_target_bed:
+      description: Target BED file containing regions to include. Will be combined with filter BED
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - target_bed:
+            type: path
+            description: Target BED file
+      required: false
+  - ch_fai:
+      description: FASTA index file for the reference FASTA. Only required if a target BED is provided, as it is used to calculate the complement of the target BED.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - fai:
+            type: path
+            description: FASTA index file
+      required: false
+  - ch_common_cnvs_bed:
+      description: BED file containing common CNVs
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - common_cnvs_bed:
+            type: path
+            description: Common CNVs BED file
+      required: false
+  - val_reformat_vcf:
+      type: boolean
+      description: If true, reformat the Canvas VCF output to match standard VCF CNV notation
+output:
+  - vcf:
+      description: VCF with CNV calls produced by Canvas with REF calls removed. Only conforms to standard VCF CNV notation if val_reformat_vcf is true.
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - vcf:
+            type: path
+            description: VCF file produced by Canvas
+  - seg:
+      description: Segment file of observed and called CNs for inspection in IGV
+      structure:
+        - meta:
+            type: map
+            description: meta map
+        - seg:
+            type: path
+            description: SEG file produced by Canvas
+authors:
+  - "@Schmytzi"
+maintainers:
+  - "@Schmytzi"

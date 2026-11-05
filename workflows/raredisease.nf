@@ -509,9 +509,33 @@ workflow RAREDISEASE {
 */
 
     if (!skip_repeat_calling && val_analysis_type.equals("wgs") && !has_any_precalled_vcf ) {
+        // Parsing NGSbits output here so we can avoid passing info whether it was skipped into CALL_REPEAT_EXPANSIONS
+        if (!skip_ngsbits) {
+            ch_ngsbits_gender = QC_BAM.out.ngsbits_samplegender_tsv.map { meta, tsv ->
+                def data_line = tsv.readLines()
+                    .find { line -> line.trim() && !line.startsWith('#') }
+
+                def gender
+                if (data_line) {
+                    gender = data_line.split('\t')[1]
+                } else if (workflow.stubRun) {
+                    gender = meta.sex == 2 ? 'female' : 'male'
+                } else {
+                    throw new IllegalStateException(
+                        "No SampleGender result found for sample ${meta.id} in ${tsv}"
+                    )
+                }
+
+                [meta, gender]
+            }
+        } else {
+            // If we skipped ngsbits, just assume that the supplied gender was correct
+            ch_ngsbits_gender = RENAME_BAM.out.output.map { meta, _bam -> [meta, meta.sex == 2 ? 'female' : 'male'] }
+        }
+
         CALL_REPEAT_EXPANSIONS (
             RENAME_BAM.out.output.join(RENAME_BAI.out.output, failOnMismatch:true, failOnDuplicate:true),
-            QC_BAM.out.ngsbits_samplegender_tsv,
+            ch_ngsbits_gender,
             ch_variant_catalog,
             ch_case_info,
             ch_genome_fasta,

@@ -48,7 +48,7 @@
     },
     "RANK_VARIANTS - SNV (process_with_sort = false), minimal dataset": {
         "content": [
-            "551ccb2cae7b4d931901ec401ca705fc",
+            "d88cb31dfec4e1cd97a834181413aaab",
             [
                 "amusingmarmoset.vcf.gz"
             ],
@@ -56,10 +56,10 @@
                 "amusingmarmoset.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-09-18T16:51:02.883329107",
+        "timestamp": "2026-10-16T09:52:47.666000995",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
         }
     },
     "RANK_VARIANTS - SNV (process_with_sort = false), stub": {

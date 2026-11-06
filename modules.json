@@ -486,6 +486,11 @@
                         "git_sha": "d9c84ed4564744313bb586928885ebf05f40ad98",
                         "installed_by": ["modules"]
                     },
+                    "sentieon/gvcftyper": {
+                        "branch": "master",
+                        "git_sha": "7b3452a23773f687ededb4befd037920e5a51341",
+                        "installed_by": ["modules"]
+                    },
                     "sentieon/readwriter": {
                         "branch": "master",
                         "git_sha": "d9c84ed4564744313bb586928885ebf05f40ad98",

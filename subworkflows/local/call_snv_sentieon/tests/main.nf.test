@@ -9,7 +9,7 @@ nextflow_workflow {
 
     tag "sentieon/dnascope"
     tag "sentieon/dnamodelapply"
-    tag "bcftools/merge"
+    tag "sentieon/gvcftyper"
     tag "bcftools/norm"
     tag "bcftools/filter"
     tag "bcftools/annotate"
@@ -17,7 +17,7 @@ nextflow_workflow {
 
     config "./nextflow.config"
 
-    test("CALL_SNV_SENTIEON - two samples (merge), minimal dataset") {
+    test("CALL_SNV_SENTIEON - two samples (joint genotyping), minimal dataset") {
 
         when {
             params {
@@ -142,7 +142,7 @@ nextflow_workflow {
         }
     }
 
-    test("CALL_SNV_SENTIEON - two samples (merge), stub") {
+    test("CALL_SNV_SENTIEON - two samples (joint genotyping), stub") {
 
         options "-stub"
 

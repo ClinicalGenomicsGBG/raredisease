@@ -6,11 +6,11 @@ include { ADD_VARCALLER_TO_BED                     } from '../../../modules/loca
 include { BCFTOOLS_ANNOTATE                        } from '../../../modules/nf-core/bcftools/annotate/main'
 include { BCFTOOLS_FILTER as BCF_FILTER_ONE        } from '../../../modules/nf-core/bcftools/filter/main'
 include { BCFTOOLS_FILTER as BCF_FILTER_TWO        } from '../../../modules/nf-core/bcftools/filter/main'
-include { BCFTOOLS_MERGE                           } from '../../../modules/nf-core/bcftools/merge/main'
 include { BCFTOOLS_NORM as REMOVE_DUPLICATES_SEN   } from '../../../modules/nf-core/bcftools/norm/main'
 include { BCFTOOLS_NORM as SPLIT_MULTIALLELICS_SEN } from '../../../modules/nf-core/bcftools/norm/main'
 include { SENTIEON_DNAMODELAPPLY                   } from '../../../modules/nf-core/sentieon/dnamodelapply/main'
 include { SENTIEON_DNASCOPE                        } from '../../../modules/nf-core/sentieon/dnascope/main'
+include { SENTIEON_GVCFTYPER                       } from '../../../modules/nf-core/sentieon/gvcftyper/main'
 
 workflow CALL_SNV_SENTIEON {
     take:
@@ -41,47 +41,49 @@ workflow CALL_SNV_SENTIEON {
             ch_dbsnp_index,
             ch_ml_model,
             ch_pcr_indel_model,
-            'VARIANT',
+            '',   // no per-sample VCF; variants are joint genotyped from the gVCFs below
             true
         )
 
-        ch_dnamodelapply_in = SENTIEON_DNASCOPE.out.vcf.join(SENTIEON_DNASCOPE.out.vcf_tbi)
+        ch_dnamodelapply_in = SENTIEON_DNASCOPE.out.gvcf
+            .join(SENTIEON_DNASCOPE.out.gvcf_tbi, failOnMismatch:true, failOnDuplicate:true)
 
         SENTIEON_DNAMODELAPPLY ( ch_dnamodelapply_in, ch_genome_fasta, ch_genome_fai, ch_ml_model )
 
-        ch_bcffilterone_in = SENTIEON_DNAMODELAPPLY.out.vcf.join(SENTIEON_DNAMODELAPPLY.out.tbi, failOnMismatch: true)
+        // DNAModelApply keeps the input format: its "vcf" output is a gVCF here
+        ch_gvcf_tbi = SENTIEON_DNAMODELAPPLY.out.vcf
+            .join(SENTIEON_DNAMODELAPPLY.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+            .map { _meta, gvcf, tbi -> return [gvcf, tbi] }
+
+        ch_gvcftyper_in = ch_case_info
+            .combine(ch_gvcf_tbi)
+            .groupTuple()
+            .map { meta, gvcfs, tbis ->
+                def sorted = [gvcfs, tbis].transpose().sort { pair -> pair[0].name }
+                return [meta, sorted.collect { pair -> pair[0] }, sorted.collect { pair -> pair[1] }]
+            }
+            .combine(ch_snv_call_region)
+            .map { meta, gvcfs, tbis, _meta2, interval -> return [meta, gvcfs, tbis, interval] }
+
+        SENTIEON_GVCFTYPER(
+            ch_gvcftyper_in,
+            ch_genome_fasta,
+            ch_genome_fai,
+            ch_dbsnp,
+            ch_dbsnp_index
+        )
+
+        ch_bcffilterone_in = SENTIEON_GVCFTYPER.out.vcf_gz
+            .join(SENTIEON_GVCFTYPER.out.vcf_gz_tbi, failOnMismatch: true, failOnDuplicate: true)
         BCF_FILTER_ONE (ch_bcffilterone_in)
 
         ch_bcffiltertwo_in = BCF_FILTER_ONE.out.vcf.join(BCF_FILTER_ONE.out.tbi, failOnMismatch: true)
         BCF_FILTER_TWO ( ch_bcffiltertwo_in )
 
-        ch_vcf_idx = BCF_FILTER_TWO.out.vcf.join(BCF_FILTER_TWO.out.tbi, failOnMismatch:true, failOnDuplicate:true)
-            .map { _meta, vcf, tbi -> return [vcf, tbi] }
+        ch_split_multi_in = BCF_FILTER_TWO.out.vcf
+            .join(BCF_FILTER_TWO.out.tbi, failOnMismatch:true, failOnDuplicate:true)
 
-        ch_vcf_idx_merge_in = ch_case_info
-            .combine(ch_vcf_idx)
-            .groupTuple()
-            .map { meta, vcfs, idxs ->
-                def sorted = [vcfs, idxs].transpose().sort { pair -> pair[0].name }
-                return [meta, sorted.collect { pair -> pair[0] }, sorted.collect { pair -> pair[1] }]
-            }
-            .branch{ _meta, vcfs, _idx ->
-                single: vcfs.size() == 1
-                multiple: vcfs.size() > 1
-            }
-
-        BCFTOOLS_MERGE(
-            ch_vcf_idx_merge_in.multiple.map { meta, vcf, idx ->  return [meta, vcf, idx, []] },
-            ch_genome_fasta.join(ch_genome_fai, failOnMismatch:true, failOnDuplicate:true).collect()
-            )
-
-        ch_split_multi_in = BCFTOOLS_MERGE.out.vcf
-                    .map{meta, bcf ->
-                        return [meta, bcf, []]}
-
-        ch_vcf_idx_case =  ch_vcf_idx_merge_in.single.mix(ch_split_multi_in)
-
-        SPLIT_MULTIALLELICS_SEN(ch_vcf_idx_case, ch_genome_fasta)
+        SPLIT_MULTIALLELICS_SEN(ch_split_multi_in, ch_genome_fasta)
         ch_remove_dup_in = SPLIT_MULTIALLELICS_SEN.out.vcf
                             .map{meta, vcf ->
                                     return [meta, vcf, []]}
@@ -105,8 +107,8 @@ workflow CALL_SNV_SENTIEON {
         BCFTOOLS_ANNOTATE(ch_annotate_in)
 
     emit:
-        gvcf     = SENTIEON_DNASCOPE.out.gvcf     // channel: [ val(meta), path(gvcf) ]
-        gvcf_tbi = SENTIEON_DNASCOPE.out.gvcf_tbi // channel: [ val(meta), path(gvcf_tbi) ]
+        gvcf     = SENTIEON_DNAMODELAPPLY.out.vcf // channel: [ val(meta), path(gvcf) ]
+        gvcf_tbi = SENTIEON_DNAMODELAPPLY.out.tbi // channel: [ val(meta), path(gvcf_tbi) ]
         tabix    = BCFTOOLS_ANNOTATE.out.tbi      // channel: [ val(meta), path(tbi) ]
         vcf      = BCFTOOLS_ANNOTATE.out.vcf      // channel: [ val(meta), path(vcf) ]
 }

@@ -12,7 +12,7 @@
             "nextflow": "25.10.4"
         }
     },
-    "CALL_SNV_SENTIEON - two samples (merge), stub": {
+    "CALL_SNV_SENTIEON - two samples (joint genotyping), stub": {
         "content": [
             {
                 "0": [
@@ -127,7 +127,7 @@
             "nextflow": "26.04.6"
         }
     },
-    "CALL_SNV_SENTIEON - two samples (merge), minimal dataset": {
+    "CALL_SNV_SENTIEON - two samples (joint genotyping), minimal dataset": {
         "content": [
             "940f8c07a50e621c1aa57b199e34d29a",
             [

@@ -7,7 +7,7 @@
                     {
                         "id": "NA12878"
                     },
-                    "NA12878.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
+                    "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
                 ]
             ],
             [
@@ -18,7 +18,7 @@
                 ]
             ]
         ],
-        "timestamp": "2026-07-29T11:06:19.438085217",
+        "timestamp": "2026-11-09T16:45:09.994798139",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -32,7 +32,7 @@
                     {
                         "id": "NA12878"
                     },
-                    "NA12878.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
+                    "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
                 ]
             ],
             [
@@ -43,7 +43,7 @@
                 ]
             ]
         ],
-        "timestamp": "2026-07-29T11:06:40.874163808",
+        "timestamp": "2026-11-09T16:45:36.672964386",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -57,7 +57,7 @@
                     {
                         "id": "NA12878"
                     },
-                    "NA12878.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
+                    "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,7a0bf126ad613632eabcc2d5b20034c5"
                 ]
             ],
             [
@@ -68,7 +68,7 @@
                 ]
             ]
         ],
-        "timestamp": "2026-07-29T11:07:04.150257341",
+        "timestamp": "2026-11-09T16:46:05.23493935",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -82,7 +82,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -90,7 +90,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -105,7 +105,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "vcf": [
@@ -113,7 +113,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "versions_canvas": [
@@ -125,7 +125,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-29T11:21:37.031208528",
+        "timestamp": "2026-11-09T16:46:49.737047368",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -139,7 +139,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -147,7 +147,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -162,7 +162,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "vcf": [
@@ -170,7 +170,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "versions_canvas": [
@@ -182,7 +182,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-29T11:21:49.256913378",
+        "timestamp": "2026-11-09T16:47:07.633124348",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
@@ -196,7 +196,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -204,7 +204,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -219,7 +219,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "NA12878_canvas.CoverageAndVariantFrequency.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "vcf": [
@@ -227,7 +227,7 @@
                         {
                             "id": "NA12878"
                         },
-                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "NA12878_canvas.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "versions_canvas": [
@@ -239,7 +239,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-29T11:21:26.171186177",
+        "timestamp": "2026-11-09T16:46:34.442847418",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

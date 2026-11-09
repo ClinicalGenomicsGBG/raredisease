@@ -16,7 +16,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_exphunter_sorted.bam.bai:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -35,7 +35,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_exphunter_sorted.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -54,7 +54,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_repeat_expansion.vcf:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -81,7 +81,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_exphunter_sorted.bam.bai:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -100,7 +100,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_exphunter_sorted.bam:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -119,7 +119,7 @@
                             "paternal": 0,
                             "maternal": 0,
                             "case_id": "amusingmarmoset",
-                            "ngsbits_sex": "male"
+                            "ngsbits_sex": "female"
                         },
                         "ACC13778A2_repeat_expansion.vcf:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -134,10 +134,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-08-24T21:13:24.107073115",
+        "timestamp": "2026-10-15T15:25:08.450484943",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
         }
     },
     "CALL_REPEAT_EXPANSIONS": {
@@ -156,7 +156,7 @@
                         "paternal": 0,
                         "maternal": 0,
                         "case_id": "amusingmarmoset",
-                        "ngsbits_sex": "male"
+                        "ngsbits_sex": "female"
                     },
                     "403b083e5ee8bc143b81b36980058e27"
                 ]
@@ -170,10 +170,10 @@
             "545167fc7911c7f2de251b30d236f77e",
             "VcfFile [chromosomes=[chrX, chr16, chr21, chr12, chr20], sampleCount=1, variantCount=7, phased=false, phasedAutodetect=false]"
         ],
-        "timestamp": "2026-08-24T21:12:56.729555871",
+        "timestamp": "2026-10-15T15:22:28.161395838",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
         }
     }
 }

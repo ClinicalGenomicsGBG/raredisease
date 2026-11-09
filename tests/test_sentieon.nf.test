@@ -3,6 +3,7 @@ nextflow_pipeline {
     name "Test pipeline - Sentieon aligner/caller"
     script "../main.nf"
     tag "pipeline"
+    tag "sentieon"
     profile "test_sentieon"
 
     test("-profile test_sentieon") {

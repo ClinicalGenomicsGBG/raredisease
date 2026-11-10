@@ -19,6 +19,7 @@ workflow CALL_REPEAT_EXPANSIONS {
         ch_case_info       // channel: [mandatory] [ val(case_id) ]
         ch_genome_fasta    // channel: [mandatory] [ val(meta), path(fasta) ]
         ch_genome_fai      // channel: [mandatory] [ val(meta), path(fai) ]
+        val_filter_expansionhunter // string: [optional] bcftools -e expression used to filter repeat expansion calls before merging
 
     main:
         ch_bam_with_gender = ch_bam

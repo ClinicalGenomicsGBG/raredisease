@@ -105,6 +105,54 @@
                     "description": "Path to the directory containing cadd annotations.",
                     "help_text": "This folder contains the uncompressed files that would otherwise be in data/annotation folder as described in https://github.com/kircherlab/CADD-scripts/#manual-installation."
                 },
+                "canvas_common_cnvs_bed": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.bed(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Optional BED file of common CNVs supplied to Canvas."
+                },
+                "canvas_filter_bed": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.bed(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas exclusion BED for problematic regions such as centromeres and telomeres."
+                },
+                "canvas_female_ploidy_vcf": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.vcf(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas ploidy VCF for female samples."
+                },
+                "canvas_genomesizes": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.xml$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Illumina Canvas GenomeSize XML reference."
+                },
+                "canvas_kmer_fasta": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.f(ast)?a$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas k-mer reference FASTA."
+                },
+                "canvas_male_ploidy_vcf": {
+                    "type": "string",
+                    "exists": true,
+                    "format": "file-path",
+                    "pattern": "^\\S+\\.vcf(\\.gz)?$",
+                    "fa_icon": "fas fa-file",
+                    "description": "Canvas ploidy VCF for male samples."
+                },
                 "fai": {
                     "type": "string",
                     "exists": true,
@@ -697,7 +745,7 @@
                     "fa_icon": "fas fa-forward",
                     "description": "Disable specified tools.",
                     "help_text": "Multiple tools can be specified, separated by commas. The GATK contamination check (`gatkcontamination`) additionally requires `contamination_sites` to be set; it is skipped automatically when that file is not provided. VerifyBamID2 (`verifybamid`) is skipped automatically when `verifybamid_svd_bed` is not provided. `manta`, `tiddit`, and `cnvnator` are structural variant callers; `tiddit` and `cnvnator` only affect WGS runs (neither runs for WES), while `manta` can be skipped for either analysis type. `vep_sv` skips VEP annotation of structural variants only; SVDB frequency annotation still runs. If `score_config_sv` includes a category that reads VEP's `CSQ` field (e.g. `most_severe_consequence`), GENMOD will fail on the missing annotation unless `--genmod_skip_plugin_check` is also set, which degrades that category to a warning instead.",
-                    "pattern": "^((fastp|gens|germlinecnvcaller|peddy|smncopynumbercaller|vcf2cytosure|fastqc|ngsbits|mitosalt|gatkcontamination|verifybamid|tiddit|cnvnator|manta|vep_sv)?,?)*(?<!,)$"
+                    "pattern": "^((fastp|gens|germlinecnvcaller|peddy|smncopynumbercaller|vcf2cytosure|fastqc|ngsbits|mitosalt|gatkcontamination|verifybamid|tiddit|canvas|cnvnator|manta|vep_sv)?,?)*(?<!,)$"
                 },
                 "somalier_sites_vcf": {
                     "type": "string",
@@ -706,18 +754,6 @@
                     "description": "Path to the somalier sites VCF (bgzipped).",
                     "pattern": "^\\S+\\.vcf(\\.gz)?$",
                     "fa_icon": "fas fa-file"
-                },
-                "sv_freq_filter_expression": {
-                    "type": "string",
-                    "fa_icon": "fas fa-filter",
-                    "description": "bcftools -e expression to filter SVs by population frequency after SVDB query.",
-                    "help_text": "Passed as the --exclude expression to bcftools view on the SV VCF, after SVDB query and before VEP annotation. For example, 'INFO/SWEFRQ >= 0.02' removes SVs with a Swedish allele frequency of 2% or higher. Null disables the filter."
-                },
-                "sv_size_threshold": {
-                    "type": "integer",
-                    "fa_icon": "fas fa-filter",
-                    "description": "Filter out SVs larger than this value in bp, after calling/merging and before annotation.",
-                    "help_text": "Applied to the merged SV VCF (all callers: Manta, TIDDIT, gCNVcaller, CNVnator, saltshaker) via bcftools view --exclude 'abs(INFO/SVLEN) > threshold'. For example, 1000000 removes SVs larger than 1 Mb. Null disables the filter."
                 }
             }
         },
@@ -836,6 +872,12 @@
                     "fa_icon": "fas fa-align-center",
                     "description": "Decompose multiallelic sites into biallelic records during variant calling (Sentieon, DeepVariant) and repeat expansion calling (ExpansionHunter).",
                     "help_text": "Controls whether `bcftools norm --multiallelics -both` is used when normalizing multiallelic sites. `bcftools norm` always runs (indels are always left-aligned); setting this to false only omits the `--multiallelics -both` decomposition. See [issue #813](https://github.com/nf-core/raredisease/issues/813) for background on why the decomposition can be undesirable for some single-interval runs."
+                },
+                "canvas_reformat_vcf": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies whether to reformat the Canvas VCF output to match the expected format for downstream analysis.",
+                    "fa_icon": "fas fa-toggle-on"
                 },
                 "sentieon_dnascope_pcr_indel_model": {
                     "type": "string",

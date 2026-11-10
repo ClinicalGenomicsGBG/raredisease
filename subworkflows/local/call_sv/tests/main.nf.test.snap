@@ -9,6 +9,12 @@
                         "amusingmarmoset_cnvnator.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
+                "1": [
+                    
+                ],
+                "canvas_seg": [
+                    
+                ],
                 "vcfs": [
                     [
                         "amusingmarmoset_tiddit.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
@@ -18,24 +24,40 @@
                 ]
             }
         ],
-        "timestamp": "2026-08-27T15:55:01.111772544",
+        "timestamp": "2026-11-25T10:55:05.017613985",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
+        }
+    },
+    "CALL_SV - wgs, stub, skip_manta, skip_canvas and skip_germlinecnvcaller": {
+        "content": [
+            [
+                [
+                    "amusingmarmoset_tiddit.vcf.gz",
+                    "amusingmarmoset_cnvnator.vcf.gz"
+                ]
+            ]
+        ],
+        "timestamp": "2026-11-25T11:05:41.361505083",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
         }
     },
     "CALL_SV - wgs, stub, skip_tiddit and skip_cnvnator": {
         "content": [
             [
                 [
-                    "amusingmarmoset_manta.vcf.gz"
+                    "amusingmarmoset_manta.vcf.gz",
+                    "ACC13778A1.vcf.gz"
                 ]
             ]
         ],
-        "timestamp": "2026-10-08T12:53:51.280149025",
+        "timestamp": "2026-11-25T11:05:11.981733122",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "26.04.4"
         }
     },
     "CALL_SV - wgs, minimal dataset": {
@@ -49,21 +71,6 @@
             ]
         ],
         "timestamp": "2026-08-21T14:24:20.169277138",
-        "meta": {
-            "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
-        }
-    },
-    "CALL_SV - wgs, stub, skip_manta and skip_germlinecnvcaller": {
-        "content": [
-            [
-                [
-                    "amusingmarmoset_tiddit.vcf.gz",
-                    "amusingmarmoset_cnvnator.vcf.gz"
-                ]
-            ]
-        ],
-        "timestamp": "2026-10-08T15:19:15.836159309",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

@@ -540,7 +540,8 @@ def checkRequiredParameters(params) {
         me_annotation            : ["mobile_element_svdb_annotations"],
         gens                     : ["gens_gnomad_pos", "gens_interval_list", "gens_pon_female", "gens_pon_male"],
         germlinecnvcaller        : ["ploidy_model", "gcnvcaller_model", "readcount_intervals"],
-        smncopynumbercaller      : ["genome"]
+        smncopynumbercaller      : ["genome"],
+        canvas                   : ["canvas_kmer_fasta", "canvas_genomesizes", "canvas_male_ploidy_vcf", "canvas_female_ploidy_vcf", "canvas_filter_bed"],
     ]
 
     def missingParamsCount = 0
@@ -559,7 +560,7 @@ def checkRequiredParameters(params) {
     // me_annotation/repeat_annotation are deliberately excluded: like snv/sv/mt_annotation, they have
     // their own precalled substitute and stay mandatory unless explicitly skipped, regardless of
     // whether calling ran.
-    def alignmentDependentConditions = ['repeat_calling', 'me_calling', 'gens', 'germlinecnvcaller']
+    def alignmentDependentConditions = ['repeat_calling', 'me_calling', 'gens', 'germlinecnvcaller', 'canvas']
     dynamicRequirements.each { condition, paramsList ->
         def auto_skipped = condition in alignmentDependentConditions && hasAnyPrecalledVcf()
         if (!all_skips.split(',').contains(condition) && !auto_skipped) {

@@ -4,8 +4,8 @@
 
 include { ADD_VARCALLER_TO_BED                     } from '../../../modules/local/add_varcallername_to_bed'
 include { BCFTOOLS_ANNOTATE                        } from '../../../modules/nf-core/bcftools/annotate/main'
-include { BCFTOOLS_FILTER as BCF_FILTER_ONE        } from '../../../modules/nf-core/bcftools/filter/main'
-include { BCFTOOLS_FILTER as BCF_FILTER_TWO        } from '../../../modules/nf-core/bcftools/filter/main'
+// include { BCFTOOLS_FILTER as BCF_FILTER_ONE        } from '../../../modules/nf-core/bcftools/filter/main'
+// include { BCFTOOLS_FILTER as BCF_FILTER_TWO        } from '../../../modules/nf-core/bcftools/filter/main'
 include { BCFTOOLS_NORM as REMOVE_DUPLICATES_SEN   } from '../../../modules/nf-core/bcftools/norm/main'
 include { BCFTOOLS_NORM as SPLIT_MULTIALLELICS_SEN } from '../../../modules/nf-core/bcftools/norm/main'
 include { SENTIEON_DNAMODELAPPLY                   } from '../../../modules/nf-core/sentieon/dnamodelapply/main'
@@ -57,11 +57,7 @@ workflow CALL_SNV_SENTIEON {
 
         ch_gvcftyper_in = ch_case_info
             .combine(ch_gvcf_tbi)
-            .groupTuple()
-            .map { meta, gvcfs, tbis ->
-                def sorted = [gvcfs, tbis].transpose().sort { pair -> pair[0].name }
-                return [meta, sorted.collect { pair -> pair[0] }, sorted.collect { pair -> pair[1] }]
-            }
+            .groupTuple(sort: { a, b -> a.name <=> b.name })
             .combine(ch_snv_call_region)
             .map { meta, gvcfs, tbis, _meta2, interval -> return [meta, gvcfs, tbis, interval] }
 
@@ -73,6 +69,9 @@ workflow CALL_SNV_SENTIEON {
             ch_dbsnp_index
         )
 
+        // TODO: ML_PROB filtering is disabled for now, since INFO/ML_PROB is not present.
+        // Replace with a filter on the joint VCF (e.g. QUAL or GQ).
+        /*
         ch_bcffilterone_in = SENTIEON_GVCFTYPER.out.vcf_gz
             .join(SENTIEON_GVCFTYPER.out.vcf_gz_tbi, failOnMismatch: true, failOnDuplicate: true)
         BCF_FILTER_ONE (ch_bcffilterone_in)
@@ -82,6 +81,10 @@ workflow CALL_SNV_SENTIEON {
 
         ch_split_multi_in = BCF_FILTER_TWO.out.vcf
             .join(BCF_FILTER_TWO.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+        */
+
+        ch_split_multi_in = SENTIEON_GVCFTYPER.out.vcf_gz
+            .join(SENTIEON_GVCFTYPER.out.vcf_gz_tbi, failOnMismatch:true, failOnDuplicate:true)
 
         SPLIT_MULTIALLELICS_SEN(ch_split_multi_in, ch_genome_fasta)
         ch_remove_dup_in = SPLIT_MULTIALLELICS_SEN.out.vcf

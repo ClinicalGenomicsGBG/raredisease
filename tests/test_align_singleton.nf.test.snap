@@ -19,10 +19,10 @@
                     "bcftools": 1.22
                 },
                 "BCFTOOLS_REHEADER_EXP": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "BCFTOOLS_REHEADER_ME": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "BCFTOOLS_ROH": {
                     "bcftools": 1.22
@@ -267,10 +267,10 @@
                     "picard": "3.4.0"
                 },
                 "REMOVE_DUPLICATES_GL": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "REMOVE_DUPLICATES_MT": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "RENAMESAMPLE_EXP": {
                     "picard": "3.4.0"
@@ -324,13 +324,13 @@
                     "bioawk": 1.0
                 },
                 "SPLIT_MULTIALLELICS_EXP": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "SPLIT_MULTIALLELICS_GL": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "SPLIT_MULTIALLELICS_MT": {
-                    "bcftools": 1.22
+                    "bcftools": "1.23.1"
                 },
                 "STRANGER": {
                     "stranger": "0.10.0",
@@ -2264,7 +2264,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-15T13:04:11.335744525",
+        "timestamp": "2026-11-10T11:24:51.420214668",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"

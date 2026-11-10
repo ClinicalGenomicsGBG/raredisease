@@ -1,14 +1,27 @@
 {
     "CALL_SNV_SENTIEON - normalize_multiallelics": {
         "content": [
-            "b746fb1a6cacd9e04ab9311ce46cd4a7",
+            "cc3618c8dd1efbbeec832ad23b63829e",
             [
                 "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-10-07T21:25:49.338424658",
+        "timestamp": "2026-11-10T14:56:01.177596665",
         "meta": {
-            "nf-test": "0.9.4",
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "CALL_SNV_SENTIEON - two samples (joint genotyping), minimal dataset": {
+        "content": [
+            "d27f5e17efcd7026687daa0a1369e54f",
+            [
+                "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
+            ]
+        ],
+        "timestamp": "2026-11-10T14:55:08.185315643",
+        "meta": {
+            "nf-test": "0.9.5",
             "nextflow": "25.10.4"
         }
     },
@@ -30,7 +43,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -48,7 +61,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -82,7 +95,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "gvcf_tbi": [
@@ -100,7 +113,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "tabix": [
@@ -121,22 +134,9 @@
                 ]
             }
         ],
-        "timestamp": "2026-08-24T09:44:58.418928868",
+        "timestamp": "2026-11-10T14:57:07.997745152",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
-        }
-    },
-    "CALL_SNV_SENTIEON - two samples (joint genotyping), minimal dataset": {
-        "content": [
-            "940f8c07a50e621c1aa57b199e34d29a",
-            [
-                "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
-            ]
-        ],
-        "timestamp": "2026-10-02T17:18:12.768213553",
-        "meta": {
-            "nf-test": "0.9.4",
             "nextflow": "25.10.4"
         }
     },
@@ -158,7 +158,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -176,7 +176,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -210,7 +210,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "gvcf_tbi": [
@@ -228,7 +228,7 @@
                             "maternal": 0,
                             "case_id": "amusingmarmoset"
                         },
-                        "ACC13778A2_dnascope.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "tabix": [
@@ -249,10 +249,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-08-24T09:44:32.893853417",
+        "timestamp": "2026-11-10T14:56:32.125593329",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.6"
+            "nextflow": "25.10.4"
         }
     }
 }

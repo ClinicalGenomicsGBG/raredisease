@@ -1,0 +1,156 @@
+{
+    "CALL_SV_CANVAS - wgs, val_reformat_vcf false, stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "seg": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "vcf": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-28T13:02:57.796428563",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "CALL_SV_CANVAS - wgs, no target bed, stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "seg": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "vcf": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-28T15:12:25.262804554",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "CALL_SV_CANVAS - wgs, target and filter bed": {
+        "content": [
+            "d41d8cd98f00b204e9800998ecf8427e",
+            [
+                "NA12878.txt"
+            ]
+        ],
+        "timestamp": "2026-09-01T10:40:01.913147091",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    },
+    "CALL_SV_CANVAS - wgs, val_reformat_vcf true, stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "seg": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "vcf": [
+                    [
+                        {
+                            "id": "NA12878",
+                            "sex": 1
+                        },
+                        "NA12878.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-08-28T15:12:47.617020652",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.4"
+        }
+    }
+}

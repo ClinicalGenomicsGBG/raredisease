@@ -93,6 +93,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
   - [CNVnator](https://github.com/abyzovlab/CNVnator)
   - [GATK GermlineCNVCaller](https://github.com/broadinstitute/gatk)
   - [SMNCopyNumberCaller](https://github.com/Illumina/SMNCopyNumberCaller)
+  - [Canvas](https://github.com/Illumina/Canvas)
 - Mitochondrial SV calling:
   - [MitoSAlt](https://mitosalt.sourceforge.io/)
   - [Saltshaker](https://gitlab.com/genomedx/annotation/saltshaker)

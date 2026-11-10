@@ -82,6 +82,12 @@ workflow RAREDISEASE {
     ch_cadd_header
     ch_cadd_prescored
     ch_cadd_resources
+    ch_canvas_common_cnvs_bed
+    ch_canvas_filter_bed
+    ch_canvas_female_ploidy_vcf
+    ch_canvas_genomesizes
+    ch_canvas_kmer_fasta
+    ch_canvas_male_ploidy_vcf
     ch_call_interval
     ch_case_info
     ch_contamination_sites
@@ -190,6 +196,8 @@ workflow RAREDISEASE {
     val_aligner
     val_analysis_type
     val_cadd_resources
+    val_canvas_reformat_vcf
+    val_cnv_caller
     val_concatenate_snv_calls
     val_duplicates_marker
     val_exclude_alt
@@ -256,6 +264,7 @@ workflow RAREDISEASE {
     ch_subsample_mt_bai                 = channel.empty()
     ch_call_sv_vcf                      = channel.empty()
     ch_call_sv_tbi                      = channel.empty()
+    ch_canvas_seg                       = channel.empty()
     ch_mt_del_result                    = channel.empty()
     ch_saltshaker_html                  = channel.empty()
     ch_saltshaker_plot                  = channel.empty()
@@ -779,11 +788,14 @@ workflow RAREDISEASE {
             val_mitosalt_split_distance_threshold,
             val_mitosalt_split_length])
 
-        // CALL_SV only handles nuclear callers; skip it entirely for mito-only analysis,
-        // mirroring how CALL_SV_MT below is gated on val_run_mt && !skip_mt_sv_calling.
         if (!val_analysis_type.equals("mito")) {
             CALL_SV (
                 ch_genome_bwaindex,
+                ch_canvas_common_cnvs_bed,
+                ch_canvas_female_ploidy_vcf,
+                ch_canvas_filter_bed,
+                ch_canvas_kmer_fasta,
+                ch_canvas_male_ploidy_vcf,
                 ch_case_info,
                 ch_gcnvcaller_model,
                 ch_mapped.genome_marked_bai,
@@ -792,14 +804,21 @@ workflow RAREDISEASE {
                 ch_genome_dictionary,
                 ch_genome_fai,
                 ch_genome_fasta,
+                ch_canvas_genomesizes,
                 ch_manta_regions,
                 ch_ploidy_model,
                 ch_readcount_intervals,
+                CALL_SNV.out.genome_vcf,
+                ch_target_bed,
                 skip_germlinecnvcaller,
-                val_analysis_type
+                val_analysis_type,
+                val_canvas_reformat_vcf,
+                val_cnv_caller
             )
             ch_call_sv_nuclear_vcfs = CALL_SV.out.vcfs
+            ch_canvas_seg = CALL_SV.out.canvas_seg
         }
+
         ch_saltshaker_vcf = channel.empty()
 
         if (val_run_mt && !skip_mt_sv_calling) {
@@ -1252,6 +1271,7 @@ workflow RAREDISEASE {
     qc_bam_riker_gcbias_summary                      = QC_BAM.out.riker_gcbias_summary                     // channel: [ val(meta), path(txt) ]
     call_sv_vcf                                      = ch_call_sv_vcf                                      // channel: [ val(meta), path(vcf) ]
     call_sv_tbi                                      = ch_call_sv_tbi                                      // channel: [ val(meta), path(tbi) ]
+    canvas_seg                                       = ch_canvas_seg
     saltshaker_html                                  = ch_saltshaker_html                                  // channel: [ val(meta), path(html) ]
     saltshaker_plot                                  = ch_saltshaker_plot                                  // channel: [ val(meta), path(png) ]
     generate_cytosure_files_cgh                      = ch_generate_cytosure_files_cgh                      // channel: [ val(meta), path(cgh) ]

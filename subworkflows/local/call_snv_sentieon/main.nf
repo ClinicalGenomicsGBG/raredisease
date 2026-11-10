@@ -104,7 +104,7 @@ workflow CALL_SNV_SENTIEON {
             .map{_meta, bed, tbi -> return [bed, tbi]}
 
         ch_annotate_in = REMOVE_DUPLICATES_SEN.out.vcf
-            .join(REMOVE_DUPLICATES_SEN.out.tbi)
+            .join(REMOVE_DUPLICATES_SEN.out.index)
             .combine(ch_varcallerbed)
             .combine(ch_foundin_header)
             .map { meta, vcf, vcf_tbi, bed, bed_tbi, hdr -> return [meta, vcf, vcf_tbi, bed, bed_tbi, [], hdr, []] }

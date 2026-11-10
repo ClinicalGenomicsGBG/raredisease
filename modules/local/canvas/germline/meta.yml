@@ -1,0 +1,155 @@
+name: "canvas_germline"
+description: |
+  Calls germline copy number variants (CNVs) from whole genome sequencing data using
+  Illumina Canvas in SmallPedigree-WGS mode. Although named SmallPedigree-WGS, this
+  mode is recommended for single germline samples as well as small pedigrees.
+  The module accepts aligned reads (BAM), germline SNV calls, and sex-specific ploidy
+  information, and outputs a VCF with copy number status across the genome together
+  with a coverage-and-variant-frequency file used for downstream segmentation.
+keywords:
+  - CNV
+  - copy number variants
+  - germline
+  - WGS
+  - canvas
+tools:
+  - canvas:
+      description: |
+        Canvas is a tool for calling copy number variants (CNVs) from human DNA sequencing data.
+      homepage: "https://github.com/Illumina/canvas"
+      documentation: "https://github.com/Illumina/canvas/wiki"
+      tool_dev_url: "https://github.com/Illumina/canvas"
+      licence:
+        - "GPL-3.0"
+      identifier: ""
+input:
+  - - meta:
+        type: map
+        description: Groovy map containing sample information
+    - bam:
+        type: file
+        description: BAM file for the sample
+        pattern: "*.bam"
+        ontologies:
+          - edam: "http://edamontology.org/format_2572"
+    - bai:
+        type: file
+        description: BAM index file for the sample
+        pattern: "*.bai"
+        ontologies:
+          - edam: "http://edamontology.org/format_3327"
+  - - meta2:
+        type: map
+        description: Groovy map containing reference information
+    - kmer_fasta:
+        type: file
+        description: Canvas-ready reference FASTA file with softmasked non-unique 35-mers
+        pattern: "*.{fa,fna,fasta}"
+        ontologies:
+          - edam: "http://edamontology.org/format_1929"
+  - - meta3:
+        type: map
+        description: Groovy map containing reference information
+    - genomesize:
+        type: file
+        description: Illumina-style Genome size XML file (GenomeSize.xml)
+        pattern: "*.xml"
+        ontologies:
+          - edam: "http://edamontology.org/format_2332"
+  - - meta4:
+        type: map
+        description: Groovy map containing reference information
+    - filter_bed:
+        type: file
+        description: BED file of regions to skip
+        pattern: "*.bed"
+        ontologies:
+          - edam: "http://edamontology.org/format_3003"
+  - - meta5:
+        type: map
+        description: Groovy map containing sample information
+    - sample_snv_vcf:
+        type: file
+        description: Multisample VCF file containing SNV b-allele sites (sample-specific). Either this or `population_snv_vcf` must be provided.
+        pattern: "*.vcf{,.gz}"
+        ontologies:
+          - edam: "http://edamontology.org/format_3016"
+  - - meta6:
+        type: map
+        description: Groovy map containing meta information for population SNV VCF
+    - population_snv_vcf:
+        type: file
+        description: VCF file containing SNV b-allele sites in the population. Either this or `sample_snv_vcf` must be provided.
+        pattern: "*.vcf{,.gz}"
+        ontologies:
+          - edam: "http://edamontology.org/format_3016"
+  - - meta7:
+        type: map
+        description: Groovy map containing meta information for ploidy VCF
+    - ploidy_vcf:
+        type: file
+        description: Multisample VCF file containing regions with expected ploidy different from 2. (See https://github.com/Illumina/canvas/wiki for an example)
+        pattern: "*.vcf{,.gz}"
+        ontologies:
+          - edam: "http://edamontology.org/format_3016"
+  - - meta8:
+        type: map
+        description: Groovy map containing reference information
+    - common_cnvs_bed:
+        type: file
+        description: BED file containing regions of known common CNVs
+        pattern: "*.bed"
+        ontologies:
+          - edam: "http://edamontology.org/format_3003"
+output:
+  vcf:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information.
+      - ${prefix}.vcf.gz:
+          type: file
+          description: Bgzipped VCF file containing germline CNV calls.
+          pattern: "*.vcf.gz"
+          ontologies:
+            - edam: "http://edamontology.org/format_3016"
+  covandvarfreq:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information.
+      - ${prefix}.CoverageAndVariantFrequency.txt:
+          type: file
+          description: |
+            Tab-separated file with per-bin coverage and variant allele frequency values.
+          pattern: "*.CoverageAndVariantFrequency.txt"
+          ontologies:
+            - edam: "http://edamontology.org/format_3475"
+  versions_canvas:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - canvas:
+          type: string
+          description: The name of the tool
+      - Canvas --version:
+          type: string
+          description: The version of the tool
+
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - canvas:
+          type: string
+          description: The name of the tool
+      - Canvas --version:
+          type: string
+          description: The version of the tool
+authors:
+  - "@ktruve"
+  - "@Schmytzi"
+maintainers:
+  - "@ktruve"
+  - "@Schmytzi"

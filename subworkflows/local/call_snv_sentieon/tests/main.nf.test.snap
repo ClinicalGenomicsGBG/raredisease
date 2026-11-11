@@ -1,4 +1,17 @@
 {
+    "CALL_SNV_SENTIEON - singleton (joint genotyping), minimal dataset": {
+        "content": [
+            "8208bc42fa62a79cf0527c533f3f3ffc",
+            [
+                "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
+            ]
+        ],
+        "timestamp": "2026-11-11T15:17:23.360844623",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
     "CALL_SNV_SENTIEON - normalize_multiallelics": {
         "content": [
             "cc3618c8dd1efbbeec832ad23b63829e",
@@ -44,6 +57,22 @@
                             "case_id": "amusingmarmoset"
                         },
                         "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ],
+                    [
+                        {
+                            "id": "ACC13778A3",
+                            "sample": "ACC13778A3",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A3\\tPL:illumina\\tSM:ACC13778A3'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 1,
+                            "paternal": 0,
+                            "maternal": 0,
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A3_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "1": [
@@ -62,6 +91,22 @@
                             "case_id": "amusingmarmoset"
                         },
                         "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "ACC13778A3",
+                            "sample": "ACC13778A3",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A3\\tPL:illumina\\tSM:ACC13778A3'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 1,
+                            "paternal": 0,
+                            "maternal": 0,
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A3_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -96,6 +141,22 @@
                             "case_id": "amusingmarmoset"
                         },
                         "ACC13778A2_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ],
+                    [
+                        {
+                            "id": "ACC13778A3",
+                            "sample": "ACC13778A3",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A3\\tPL:illumina\\tSM:ACC13778A3'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 1,
+                            "paternal": 0,
+                            "maternal": 0,
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A3_dnamodelapply.g.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
                     ]
                 ],
                 "gvcf_tbi": [
@@ -114,6 +175,22 @@
                             "case_id": "amusingmarmoset"
                         },
                         "ACC13778A2_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ],
+                    [
+                        {
+                            "id": "ACC13778A3",
+                            "sample": "ACC13778A3",
+                            "single_end": false,
+                            "num_lanes": 1,
+                            "read_group": "'@RG\\tID:ACC13778A3\\tPL:illumina\\tSM:ACC13778A3'",
+                            "lane": 1,
+                            "sex": 1,
+                            "phenotype": 1,
+                            "paternal": 0,
+                            "maternal": 0,
+                            "case_id": "amusingmarmoset"
+                        },
+                        "ACC13778A3_dnamodelapply.g.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "tabix": [
@@ -134,7 +211,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-11-10T14:57:07.997745152",
+        "timestamp": "2026-11-11T15:19:32.161592771",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"

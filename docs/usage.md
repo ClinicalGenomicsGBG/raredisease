@@ -350,6 +350,7 @@ If a sample plays a parental role in the pedigree (listed as another sample's `p
 |                            | known_dbsnp_tbi<sup>2</sup>         |
 |                            | par_bed<sup>4</sup>                 |
 |                            | ml_prob_threshold<sup>2,6</sup>     |
+|                            | skip_ml_rescue<sup>2,6</sup>        |
 |                            | normalize_multiallelics<sup>7</sup> |
 
 <sup>1</sup>Default variant caller is DeepVariant, but you have the option to use Sentieon as well.<br />
@@ -357,7 +358,7 @@ If a sample plays a parental role in the pedigree (listed as another sample's `p
 <sup>3</sup>Default is `WGS`, but you have the option to choose `WES` and `mito` as well.<br />
 <sup>4</sup>This parameter is only used by Deepvariant.<br />
 <sup>5</sup>Restricts SNV calling to this region for both DeepVariant and Sentieon. Falls back to the padded `--target_bed` (as processed by the pipeline, not the raw file) when not set and `analysis_type` is `wes`; for `wgs`, `target_bed` is not used as a calling restriction (it may be set purely for QC/contamination purposes), so the whole genome is called unless `--snv_call_region` is set explicitly.<br />
-<sup>6</sup>Variants with `INFO/ML_PROB` less than or equal to this value are tagged `ML_FAIL` and removed. Defaults to `0.70` when not set.<br />
+<sup>6</sup>Before joint genotyping, 0/0 calls on biallelic gVCF records with `FORMAT/ML[0]` (the probability of 0/0) less than or equal to `ml_prob_threshold` are set to 0/1 or 1/1, whichever is more likely. `ml_prob_threshold` defaults to `0.70`. Set `--skip_ml_rescue` to pass the DNAModelApply gVCFs to GVCFtyper unchanged.<br />
 <sup>7</sup>Controls whether `bcftools norm --multiallelics -both` decomposes multiallelic sites into biallelic records, for both DeepVariant and Sentieon SNV calling (also applies to ExpansionHunter repeat expansion calling, see section 3). `bcftools norm` always runs — indels are always left-aligned — this only toggles the `-both` decomposition. Default is `true` (current behavior unchanged). Set to `false` to keep multiallelic sites undecomposed, which can improve indel precision for single-interval runs; see [issue #813](https://github.com/nf-core/raredisease/issues/813) for background.<br />
 
 ##### 5. Variant calling - Structural variants

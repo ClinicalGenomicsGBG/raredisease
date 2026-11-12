@@ -863,8 +863,14 @@
                     "type": "number",
                     "default": 0.7,
                     "fa_icon": "fas fa-sliders-h",
-                    "description": "ML_PROB threshold used to filter Sentieon DNAscope variants.",
-                    "help_text": "Variants with INFO/ML_PROB less than or equal to this value are tagged ML_FAIL and removed. Only used when --variant_caller is sentieon. Defaults to 0.70 when not set."
+                    "description": "FORMAT/ML threshold used to rescue hom-ref calls in Sentieon DNAscope gVCFs.",
+                    "help_text": "On biallelic gVCF records, 0/0 calls with FORMAT/ML[0] (the probability of 0/0) less than or equal to this value are set to 0/1 or 1/1, whichever is more likely, before joint genotyping with GVCFtyper. Only used when --variant_caller is sentieon and --skip_ml_rescue is not set. Defaults to 0.70 when not set."
+                },
+                "skip_ml_rescue": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip the rescue of hom-ref calls in Sentieon DNAscope gVCFs based on FORMAT/ML.",
+                    "help_text": "When set, the DNAModelApply gVCFs are passed to GVCFtyper unchanged (DNAscope -> DNAModelApply -> GVCFtyper), and --ml_prob_threshold has no effect. Only used when --variant_caller is sentieon."
                 }
             }
         },

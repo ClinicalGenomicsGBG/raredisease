@@ -54,18 +54,22 @@ workflow CALL_SNV_SENTIEON {
         ch_ml_rescue_in = SENTIEON_DNAMODELAPPLY.out.vcf
             .join(SENTIEON_DNAMODELAPPLY.out.tbi, failOnMismatch:true, failOnDuplicate:true)
 
-        // Rescue 0/0 calls where P(0/0) = FORMAT/ML[0] <= params.ml_prob_threshold, by setting GT
-        // to the most likely non-ref genotype. Biallelic records only (ALT = X,<NON_REF>), where
-        // ML[1] = P(0/1) and ML[2] = P(1/1). See ext.args2 in the config.
-        ML_RESCUE_HET ( ch_ml_rescue_in, channel.value('q'), channel.value("c:'0/1'"), [], [] )
+        if (params.skip_ml_rescue) {
+            ch_gvcf_for_typer = ch_ml_rescue_in
+        } else {
+            // Rescue 0/0 calls where P(0/0) = FORMAT/ML[0] <= params.ml_prob_threshold, by setting GT
+            // to the most likely non-ref genotype. Biallelic records only (ALT = X,<NON_REF>), where
+            // ML[1] = P(0/1) and ML[2] = P(1/1). See ext.args2 in the config.
+            ML_RESCUE_HET ( ch_ml_rescue_in, 'q', "c:'0/1'", [], [] )
+            ch_rescue_het = ML_RESCUE_HET.out.vcf
+                .join(ML_RESCUE_HET.out.tbi, failOnMismatch:true, failOnDuplicate:true)
 
-        ch_ml_rescue_homalt_in = ML_RESCUE_HET.out.vcf
-            .join(ML_RESCUE_HET.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+            ML_RESCUE_HOMALT ( ch_rescue_het, 'q', "c:'1/1'", [], [] )
+            ch_gvcf_for_typer = ML_RESCUE_HOMALT.out.vcf
+                .join(ML_RESCUE_HOMALT.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+        }
 
-        ML_RESCUE_HOMALT ( ch_ml_rescue_homalt_in, channel.value('q'), channel.value("c:'1/1'"), [], [] )
-
-        ch_gvcf_tbi = ML_RESCUE_HOMALT.out.vcf
-            .join(ML_RESCUE_HOMALT.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+        ch_gvcf_tbi = ch_gvcf_for_typer
             .map { _meta, gvcf, tbi -> return [gvcf, tbi] }
 
         ch_gvcftyper_in = ch_case_info

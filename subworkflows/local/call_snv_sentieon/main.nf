@@ -4,8 +4,8 @@
 
 include { ADD_VARCALLER_TO_BED                     } from '../../../modules/local/add_varcallername_to_bed'
 include { BCFTOOLS_ANNOTATE                        } from '../../../modules/nf-core/bcftools/annotate/main'
-// include { BCFTOOLS_FILTER as BCF_FILTER_ONE        } from '../../../modules/nf-core/bcftools/filter/main'
-// include { BCFTOOLS_FILTER as BCF_FILTER_TWO        } from '../../../modules/nf-core/bcftools/filter/main'
+include { BCFTOOLS_PLUGINSETGT as ML_RESCUE_HET    } from '../../../modules/nf-core/bcftools/pluginsetgt/main'
+include { BCFTOOLS_PLUGINSETGT as ML_RESCUE_HOMALT } from '../../../modules/nf-core/bcftools/pluginsetgt/main'
 include { BCFTOOLS_NORM as REMOVE_DUPLICATES_SEN   } from '../../../modules/nf-core/bcftools/norm/main'
 include { BCFTOOLS_NORM as SPLIT_MULTIALLELICS_SEN } from '../../../modules/nf-core/bcftools/norm/main'
 include { SENTIEON_DNAMODELAPPLY                   } from '../../../modules/nf-core/sentieon/dnamodelapply/main'
@@ -51,8 +51,21 @@ workflow CALL_SNV_SENTIEON {
         SENTIEON_DNAMODELAPPLY ( ch_dnamodelapply_in, ch_genome_fasta, ch_genome_fai, ch_ml_model )
 
         // DNAModelApply keeps the input format: its "vcf" output is a gVCF here
-        ch_gvcf_tbi = SENTIEON_DNAMODELAPPLY.out.vcf
+        ch_ml_rescue_in = SENTIEON_DNAMODELAPPLY.out.vcf
             .join(SENTIEON_DNAMODELAPPLY.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+
+        // Rescue 0/0 calls where P(0/0) = FORMAT/ML[0] <= params.ml_prob_threshold, by setting GT
+        // to the most likely non-ref genotype. Biallelic records only (ALT = X,<NON_REF>), where
+        // ML[1] = P(0/1) and ML[2] = P(1/1). See ext.args2 in the config.
+        ML_RESCUE_HET ( ch_ml_rescue_in, channel.value('q'), channel.value("c:'0/1'"), [], [] )
+
+        ch_ml_rescue_homalt_in = ML_RESCUE_HET.out.vcf
+            .join(ML_RESCUE_HET.out.tbi, failOnMismatch:true, failOnDuplicate:true)
+
+        ML_RESCUE_HOMALT ( ch_ml_rescue_homalt_in, channel.value('q'), channel.value("c:'1/1'"), [], [] )
+
+        ch_gvcf_tbi = ML_RESCUE_HOMALT.out.vcf
+            .join(ML_RESCUE_HOMALT.out.tbi, failOnMismatch:true, failOnDuplicate:true)
             .map { _meta, gvcf, tbi -> return [gvcf, tbi] }
 
         ch_gvcftyper_in = ch_case_info
@@ -68,20 +81,6 @@ workflow CALL_SNV_SENTIEON {
             ch_dbsnp,
             ch_dbsnp_index
         )
-
-        // TODO: ML_PROB filtering is disabled for now, since INFO/ML_PROB is not present.
-        // Replace with a filter on the joint VCF (e.g. QUAL or GQ).
-        /*
-        ch_bcffilterone_in = SENTIEON_GVCFTYPER.out.vcf_gz
-            .join(SENTIEON_GVCFTYPER.out.vcf_gz_tbi, failOnMismatch: true, failOnDuplicate: true)
-        BCF_FILTER_ONE (ch_bcffilterone_in)
-
-        ch_bcffiltertwo_in = BCF_FILTER_ONE.out.vcf.join(BCF_FILTER_ONE.out.tbi, failOnMismatch: true)
-        BCF_FILTER_TWO ( ch_bcffiltertwo_in )
-
-        ch_split_multi_in = BCF_FILTER_TWO.out.vcf
-            .join(BCF_FILTER_TWO.out.tbi, failOnMismatch:true, failOnDuplicate:true)
-        */
 
         ch_split_multi_in = SENTIEON_GVCFTYPER.out.vcf_gz
             .join(SENTIEON_GVCFTYPER.out.vcf_gz_tbi, failOnMismatch:true, failOnDuplicate:true)

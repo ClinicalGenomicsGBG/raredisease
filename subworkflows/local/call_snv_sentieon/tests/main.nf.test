@@ -11,7 +11,7 @@ nextflow_workflow {
     tag "sentieon/dnamodelapply"
     tag "sentieon/gvcftyper"
     tag "bcftools/norm"
-    tag "bcftools/filter"
+    tag "bcftools/pluginsetgt"
     tag "bcftools/annotate"
     tag "add_varcallername_to_bed"
 

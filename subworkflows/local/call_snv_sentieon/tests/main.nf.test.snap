@@ -1,12 +1,12 @@
 {
     "CALL_SNV_SENTIEON - singleton (joint genotyping), minimal dataset": {
         "content": [
-            "763937ade18177954f5cafe441ca1a0f",
+            "7409122901294fb4e08e3d42f9c2106a",
             [
                 "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-11-13T13:15:39.188315599",
+        "timestamp": "2026-11-13T16:40:04.109932301",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -14,12 +14,12 @@
     },
     "CALL_SNV_SENTIEON - normalize_multiallelics": {
         "content": [
-            "7245aa02fba1a65cf5f4a935341f117f",
+            "9cf7ec095a4a74083ca14d40a2a8fce4",
             [
                 "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-11-13T13:16:30.593126412",
+        "timestamp": "2026-11-13T16:40:54.323012952",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
@@ -206,12 +206,12 @@
     },
     "CALL_SNV_SENTIEON - two samples (joint genotyping), minimal dataset": {
         "content": [
-            "c72710d3df7de809b233177d8d8901a4",
+            "d98eae9086fea5ceeb1926ef5263199a",
             [
                 "amusingmarmoset_split_rmdup_info.vcf.gz.tbi"
             ]
         ],
-        "timestamp": "2026-11-13T13:14:48.975118556",
+        "timestamp": "2026-11-13T16:35:21.85518882",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
